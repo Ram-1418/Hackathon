@@ -1,17 +1,16 @@
-import { useState } from 'react'
-import Navbar from './components/Navbar'
-import Footer from './components/Footer'
-
+import React from 'react';
+import Home from './components/Home';
+// import Dashboard from './pages/Dashboard';
+// import Quiz from './pages/Quiz';
+// import Layout from './Layout';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-<div>
-  <Navbar/>
-  <Footer/>
-</div>
-  )
+ <>
+  <Home/>
+ </>
+  );
 }
 
-export default App
+export default App;
+
