@@ -8,6 +8,7 @@ import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } 
 import Services from './components/Services.jsx'
 import About from './components/About.jsx'
 import Contact from './components/Contact.jsx'
+import Register from './components/Register.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -16,6 +17,7 @@ const router = createBrowserRouter(
       <Route path='/services' element={<Services />} />
       <Route path='/about' element={<About />} />
       <Route path='/contact' element={<Contact />} />
+      <Route path='/register' element={<Register />} />
       {/* <Route path='about' element={<About />} />
       <Route path='contact' element={<Contact />} />
       <Route path='user/:userid' element={<User />} />
