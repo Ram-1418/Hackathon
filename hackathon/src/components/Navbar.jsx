@@ -76,9 +76,12 @@ function Navbar() {
           >
             About
           </NavLink>
+          <Link
+          to="/login">
           <button className="`block py-2 pr-4 pl-3 duration-200 rounded-md font-medium bg-blue-500 text-white">
-            Register
+            Login
           </button>
+          </Link>
         </div>
       </div>
     </nav>

@@ -10,6 +10,9 @@ import Contact from './components/Contact.jsx'
 import Register from './components/Register.jsx'
 import Quiz from './components/Quiz.jsx'
 import Apppointment from './components/Apppointment.jsx'
+import Login from './components/Login.jsx'
+import Dashboard from './components/Dashboard.jsx'
+
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -21,6 +24,8 @@ const router = createBrowserRouter(
       <Route path='/register' element={<Register />} />
       <Route path='/quiz' element={<Quiz />} />
       <Route path='/appointments' element={<Apppointment />} />
+      <Route path='/login' element={<Login />} />
+      <Route path='/dashboard' element={<Dashboard />} />
       {/* <Route path='about' element={<About />} />
       <Route path='contact' element={<Contact />} />
       <Route path='user/:userid' element={<User />} />
