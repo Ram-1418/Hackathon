@@ -2,27 +2,27 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 function Home() {
   const navigate = useNavigate();
-const navigateToQuiz=()=>{
-  navigate("/quiz");
-}
-  const handleStartJourney = () => {
-    navigate("/register"); // Redirect to the registration page
-  };
   return (
     <div className="bg-gray-100 text-gray-900">
       {/* Hero Section */}
 
-      <section className=" text-white py-20 bg-cover bg-center min-h-[500px] flex flex-wrap justify-center items-center flex-col" style={{
-        backgroundImage:" linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 200, 0.5)),url(./hero.jpg)",
-        backdropFilter:"blur(2px)"
-      }}>
+      <section
+        className=" text-white py-20 bg-cover bg-center min-h-[500px] flex flex-wrap justify-center items-center flex-col"
+        style={{
+          backgroundImage:
+            " linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 200, 0.5)),url(./hero.jpg)",
+          backdropFilter: "blur(2px)",
+        }}
+      >
         <div className="container mx-auto text-center">
           <h1 className="text-4xl font-bold mb-4">
             Welcome to Your Mental Health Portal
           </h1>
           <p className="text-xl mb-8">Your Gateway to Mental Wellness</p>
-          <button className="bg-white text-blue-500 font-semibold py-2 px-6 rounded shadow"
-          onClick={handleStartJourney}>
+          <button
+            className="bg-white text-blue-500 font-semibold py-2 px-6 rounded shadow"
+            onClick={()=>{navigate('/register')}}
+          >
             Start Your Journey
           </button>
         </div>
@@ -34,12 +34,14 @@ const navigateToQuiz=()=>{
           <h2 className="text-3xl font-bold text-center mb-8">What We Offer</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-white p-6 rounded-lg shadow-lg">
-             
               <h3 className="text-2xl font-bold mb-4">
                 Self-Assessment Quizzes
               </h3>
               <p className="mb-4">Identify your mental health needs.</p>
-              <button className="text-blue-500 font-semibold" onClick={navigateToQuiz}>
+              <button
+                className="text-blue-500 font-semibold"
+                onClick={()=>{navigate('/quiz')}}
+              >
                 Learn More
               </button>
             </div>
