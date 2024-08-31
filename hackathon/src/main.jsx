@@ -9,6 +9,8 @@ import Services from './components/Services.jsx'
 import About from './components/About.jsx'
 import Contact from './components/Contact.jsx'
 import Register from './components/Register.jsx'
+import Quiz from './components/Quiz.jsx'
+import Apppointment from './components/Apppointment.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -18,6 +20,8 @@ const router = createBrowserRouter(
       <Route path='/about' element={<About />} />
       <Route path='/contact' element={<Contact />} />
       <Route path='/register' element={<Register />} />
+      <Route path='/quiz' element={<Quiz />} />
+      <Route path='/appointments' element={<Apppointment />} />
       {/* <Route path='about' element={<About />} />
       <Route path='contact' element={<Contact />} />
       <Route path='user/:userid' element={<User />} />
