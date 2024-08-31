@@ -10,16 +10,16 @@ function Navbar() {
       <ul className="flex space font-bold  text-gray-800  space-x-4 font-
 -x-4">
         <li>
-          <a href="/" className="hover:text-white-500">Home</a>
+          <a href="/" className="hover:text-red-500">Home</a>
         </li>
         <li>
-          <a href="/about" className="hover:text-white-500">About</a>
+          <a href="/about" className="hover:text-red-500">About</a>
         </li>
         <li>
-          <a href="/services" className="hover:text-white-500">Services</a>
+          <a href="/services" className="hover:text-red-500">Services</a>
         </li>
         <li>
-          <a href="/contact" className="hover:text-white-500">Contact</a>
+          <a href="/contact" className="hover:text-red-500">Contact</a>
         </li>
       </ul>
     </div>
