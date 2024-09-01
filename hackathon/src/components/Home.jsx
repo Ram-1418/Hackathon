@@ -11,7 +11,7 @@ function Home() {
         className=" text-white py-20 bg-cover bg-center min-h-[500px] flex flex-wrap justify-center items-center flex-col"
         style={{
           backgroundImage:
-            " linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 200, 0.5)),url(./hero.jpg)",
+            " linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 80, 250, 0.5)),url(./hero.jpg)",
           backdropFilter: "blur(2px)",
         }}
       >
@@ -48,7 +48,7 @@ function Home() {
             <div className="bg-cyan-300 p-6 rounded-lg shadow-lg hover:shadow-xl hover:bg-cyan-500 transition duration-200 border-solid border-2 border-sky-500">
               <img
                 className="h-[60px] w-[60px] rounded-full "
-                src="./public/quiz.png"
+                src="./quiz.png"
                 alt=""
               />
 
@@ -70,7 +70,7 @@ function Home() {
               </button>
             </div>
             <div className="bg-cyan-300 p-6 rounded-lg shadow-lg hover:shadow-xl hover:bg-cyan-500 transition duration-200 border-solid border-2 border-sky-500">
-              <img src="./public/hourglass 1.png" alt="" />
+              <img src="./hourglass 1.png" alt="" />
               <h3 className="text-2xl font-bold mb-4 ">
                 Free 24 X 7 X 365 Mental Health Support
               </h3>
@@ -86,7 +86,7 @@ function Home() {
             <div className="bg-cyan-300 p-6 rounded-lg shadow-lg hover:shadow-xl hover:bg-cyan-500 transition duration-200 border-solid border-2 border-sky-500">
               <img
                 className="h-[60px] w-[60px] rounded-full "
-                src="./public/Libiry1.png"
+                src="./Libiry1.png"
                 alt=""
               />
               <h3 className="text-2xl font-bold mb-4">Resource Library</h3>
@@ -100,7 +100,7 @@ function Home() {
               </button>
             </div>
             <div className="bg-cyan-300 p-6 rounded-lg shadow-lg hover:shadow-xl hover:bg-cyan-500 transition duration-200 border-solid border-2 border-sky-500">
-              <img src="./public/group 1.png" alt="" />
+              <img src="./group 1.png" alt="" />
               <h3 className="text-2xl font-bold mb-4">Skill Academy</h3>
               <p className="mb-4">
                 Employees and Volunteers, most of who have a background in
@@ -112,7 +112,6 @@ function Home() {
               </p>
               <button
                 className="text-blue-500 font-semibold"
-                onClick={navigateToQuiz}
               >
                 Learn More
               </button>
@@ -130,13 +129,12 @@ function Home() {
               </p>
               <button
                 className="text-blue-500 font-semibold"
-                onClick={navigateToQuiz}
               >
                 Learn More
               </button>
             </div>
             <div className="bg-cyan-300 p-6 rounded-lg shadow-lg hover:shadow-xl hover:bg-cyan-500 transition duration-200 drop-shadow-2xl border-solid border-2 border-sky-500">
-              <img src="./public/group 1.png" alt="" />
+              <img src="./group 1.png" alt="" />
               <h3 className="text-2xl font-bold mb-4">Paid Consultation</h3>
               <p className="mb-4">
                 Opt for one or more rounds of paid video/telephonic
@@ -146,7 +144,6 @@ function Home() {
               </p>
               <button
                 className="text-blue-500 font-semibold"
-                onClick={navigateToQuiz}
               >
                 Learn More
               </button>
@@ -188,7 +185,7 @@ function Home() {
               target="_blank"
               rel="noopener noreferrer"
             >
-             <img src="https://static.whatsapp.net/rsrc.php/yZ/r/JvsnINJ2CZv.svg" alt="" srcset=""  />
+             <img src="https://static.whatsapp.net/rsrc.php/yZ/r/JvsnINJ2CZv.svg" alt="" srcSet=""  />
               Free Mental Health Counselling
             </a>
           </div>
