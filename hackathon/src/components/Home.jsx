@@ -117,7 +117,7 @@ function Home() {
               </button>
             </div>
             <div className="bg-cyan-300 p-6 rounded-lg shadow-lg hover:shadow-xl hover:bg-cyan-500 transition duration-200 border-solid border-2 border-sky-500">
-              <img src="./public/support 1.png" alt="" />
+              <img src="./support 1.png" alt="" />
               <h3 className="text-2xl font-bold mb-4">
                 Raise Awareness & Build Advocacy
               </h3>

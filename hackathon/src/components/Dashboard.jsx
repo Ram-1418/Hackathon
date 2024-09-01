@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { doc, getDoc } from "firebase/firestore";
+
+import { doc, collection, getDoc, getDocs } from "firebase/firestore";
 import { db, auth } from "../firebase";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import QuizForm from "./QuizForm";
 
 function Dashboard() {
-    const navigate = useNavigate()
+  const { doctor } = useParams();
+  const isDoctor = doctor === "doctor";
+  const [responses, setResponses] = useState([]);
+  const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
   const [activeTab, setActiveTab] = useState("Profile");
   const handleTabClick = (tab) => {
@@ -14,7 +18,7 @@ function Dashboard() {
 
   const fetchUserData = async () => {
     const user = auth.currentUser; // Get the currently logged-in user
-    if (user) {
+    if (!isDoctor) {
       const docRef = doc(db, "users", user.uid);
       const docSnap = await getDoc(docRef);
 
@@ -26,25 +30,70 @@ function Dashboard() {
       }
     } else {
       console.log("No user is signed in");
-        navigate("/login")
+      if (isDoctor) {
+        navigate("/login/doctor");
+      } else {
+        navigate("/login");
+      }
+      return null;
+    }
+  };
+  const fetchDoctorData = async () => {
+    const user = auth.currentUser; // Get the currently logged-in user
+
+    if (user) {
+      // Check if a user is signed in
+      const docRef = doc(db, "doctors", user.uid); // Use "doctors" collection
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        return docSnap.data(); // Return the doctor's data
+      } else {
+        console.log("No doctor document found!");
+        return null;
+      }
+    } else {
+      console.log("No user is signed in");
+      navigate("/login/doctor"); // Redirect to doctor login
       return null;
     }
   };
 
   useEffect(() => {
     const fetchUser = async () => {
-      const data = await fetchUserData();
+      const data = await (isDoctor ? fetchDoctorData() : fetchUserData());
+      console.log(data);
       setUserData(data);
+      const quizResponsesCollectionRef = collection(db, 'quizResponses');
+
+// Fetch all documents from the collection
+getDocs(quizResponsesCollectionRef)
+  .then((snapshot) => {
+    const allResponses = []
+    // Loop through each document in the snapshot
+
+    snapshot.docs.forEach((doc) => {
+      // Get the document data
+      const data = doc.data();
+      allResponses.push(data)
+      // Do something with the data, for example, log it to the console
+      console.log(data);
+    });
+    setResponses(allResponses)
+    console.log(allResponses);
+  })
+  .catch((error) => {
+    console.error("Error getting documents: ", error);
+  });
     };
 
     fetchUser();
-  }, []); // Run only once on component mount
+  }, [userData]); // Run only once on component mount
+  console.log(userData);
   return (
     <div className="bg-gray-100 min-h-screen flex">
       {/* Sidebar */}
-      <div
-        className="bg-white w-64 shadow-md"
-      >
+      <div className="bg-white w-64 shadow-md">
         <div className="p-6">
           {/* Profile Section in Sidebar */}
           <div
@@ -127,23 +176,34 @@ function Dashboard() {
         {activeTab === "Profile" && (
           <div>
             <h2 className="text-2xl font-semibold mb-4">Profile</h2>
-            {userData && (
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <div className="flex items-center">
-                  <img
-                    src={userData.photoURL}
-                    alt="Profile"
-                    className="w-16 h-16 rounded-full mr-4"
-                  />
-                  <div>
-                    <h3 className="text-xl font-semibold text-gray-800">
-                      {userData.displayName}
-                    </h3>
-                    {/* Display other user data as needed */}
-                  </div>
+
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex items-center">
+                <img
+                  src={
+                    userData?.photoURL ??
+                    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+                  }
+                  alt="Profile"
+                  className="w-16 h-16 rounded-full mr-4"
+                />
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-800">
+                    {/* {userData?.displayName??(isDoctor? `Doctor`:"User")} */}
+                    {userData
+                      ? userData.displayName
+                        ? userData.displayName
+                        : isDoctor
+                        ? "Doctor"
+                        : "User"
+                      : isDoctor
+                      ? "Doctor"
+                      : "User"}
+                  </h3>
+                  {/* Display other user data as needed */}
                 </div>
               </div>
-            )}
+            </div>
           </div>
         )}
         {activeTab === "Submitted Reports" && (
@@ -151,11 +211,19 @@ function Dashboard() {
             <h2 className="text-2xl font-semibold mb-4">Submitted Reports</h2>
             {/* Display submitted reports here */}
             <p>No reports submitted yet.</p>
+            
+            {
+              responses.map((data,idx)=>{
+                return <div>
+                  {data.userId}
+                </div>
+              })
+            }
           </div>
         )}
-         {activeTab === "Quiz" && (
+        {activeTab === "Quiz" && (
           <div>
-           <QuizForm/>
+            <QuizForm />
           </div>
         )}
       </div>

@@ -31,9 +31,10 @@ const router = createBrowserRouter(
       <Route path='/register' element={<Register />} />
       <Route path='/quiz' element={<Quiz />} />
       <Route path='/appointments' element={<Apppointment />} />
-      <Route path='/login' element={<Login />} />
-      <Route path='/dashboard' element={<Dashboard />} />
+      <Route path='/dashboard/:doctor' element={<Dashboard />} />
       <Route path='/quiz-form' element={<QuizForm />} />
+      <Route path='/login/:doctor' element={<Login />} />
+      <Route path='/login' element={<Login />} />
       {/* <Route path='about' element={<About />} />
       <Route path='contact' element={<Contact />} />
       <Route path='user/:userid' element={<User />} />

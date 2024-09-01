@@ -8,7 +8,7 @@ import Login from './components/Login';
 function Layout() {
   const location = useLocation();
   const isDashboard = location.pathname === '/dashboard'; // Check if the current route is /dashboard
-  const isLogin = location.pathname==='/login'
+  const isLogin = location.pathname.includes("/login")
   return (
     <>
    {!(isDashboard || isLogin) && <Navbar />} {/* Render Navbar only if not on Dashboard */}
