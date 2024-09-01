@@ -17,6 +17,7 @@ function Login() {
         displayName: user.displayName,
         email: user.email,
         photoURL: user.photoURL,
+        role:"user"
         // Add any other relevant user data you want to store
       });
 

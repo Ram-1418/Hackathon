@@ -1,6 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { getAnalytics } from "firebase/analytics";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword } from "firebase/auth";
 import { getFirestore } from "firebase/firestore"; // Import Firestore
 
 const firebaseConfig = {
@@ -12,9 +11,12 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
+// Initialize Firebase Authentication and Firestore
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
-const db = getFirestore(app); // Initialize Firestore
-const analytics = getAnalytics(app);
-export { auth, provider, signInWithPopup, db }; // Export db
+const db = getFirestore(app); // Firestore using modular SDK
+
+export { auth, provider, signInWithPopup, db , signInWithEmailAndPassword};

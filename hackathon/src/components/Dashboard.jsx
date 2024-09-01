@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db, auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
+import QuizForm from "./QuizForm";
 
 function Dashboard() {
     const navigate = useNavigate()
@@ -42,8 +43,7 @@ function Dashboard() {
     <div className="bg-gray-100 min-h-screen flex">
       {/* Sidebar */}
       <div
-        className="bg-white w-
-64 shadow-md"
+        className="bg-white w-64 shadow-md"
       >
         <div className="p-6">
           {/* Profile Section in Sidebar */}
@@ -96,6 +96,30 @@ function Dashboard() {
             </svg>
             <span>Submitted Reports</span>
           </div>
+          <div
+            className={`flex items-center p-2 rounded-lg cursor-pointer ${
+              activeTab === "Quiz"
+                ? "bg-blue-500 text-white"
+                : "hover:bg-gray-100"
+            }`}
+            onClick={() => handleTabClick("Quiz")}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 mr-2"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            <span>Quiz</span>
+          </div>
         </div>
       </div>
       {/* Content Area */}
@@ -127,6 +151,11 @@ function Dashboard() {
             <h2 className="text-2xl font-semibold mb-4">Submitted Reports</h2>
             {/* Display submitted reports here */}
             <p>No reports submitted yet.</p>
+          </div>
+        )}
+         {activeTab === "Quiz" && (
+          <div>
+           <QuizForm/>
           </div>
         )}
       </div>

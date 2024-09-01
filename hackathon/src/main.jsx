@@ -12,7 +12,7 @@ import Quiz from './components/Quiz.jsx'
 import Apppointment from './components/Apppointment.jsx'
 import Login from './components/Login.jsx'
 import Dashboard from './components/Dashboard.jsx'
-
+import QuizForm from './components/QuizForm.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -26,6 +26,7 @@ const router = createBrowserRouter(
       <Route path='/appointments' element={<Apppointment />} />
       <Route path='/login' element={<Login />} />
       <Route path='/dashboard' element={<Dashboard />} />
+      <Route path='/quiz-form' element={<QuizForm />} />
       {/* <Route path='about' element={<About />} />
       <Route path='contact' element={<Contact />} />
       <Route path='user/:userid' element={<User />} />
