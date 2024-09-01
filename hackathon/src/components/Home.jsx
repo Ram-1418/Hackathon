@@ -2,12 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 function Home() {
   const navigate = useNavigate();
-  const navigateToQuiz = () => {
-    navigate("/quiz");
-  };
-  const handleStartJourney = () => {
-    navigate("/register"); // Redirect to the registration page
-  };
+
   return (
     <div className="bg-gray-100 text-gray-900">
       {/* Hero Section */}
@@ -27,7 +22,9 @@ function Home() {
           <p className="text-xl mb-8">Your Gateway to Mental Wellness</p>
           <button
             className="bg-white text-blue-500 font-semibold py-2 px-6 rounded shadow"
-            onClick={handleStartJourney}
+
+            onClick={()=>{navigate('/register')}}
+
           >
             Start Your Journey
           </button>
@@ -37,6 +34,7 @@ function Home() {
       {/* Services Overview */}
       <section className="py-16">
         <div className="container mx-auto px-3">
+
           <h2 className="text-3xl font-bold text-center mb-8">
             What We Offer <b />
             <p className="text-2xl text-center mb-8">
@@ -65,7 +63,8 @@ function Home() {
               </p>
               <button
                 className="text-blue-500 font-semibold"
-                onClick={navigateToQuiz}
+     
+
               >
                 Learn More
               </button>

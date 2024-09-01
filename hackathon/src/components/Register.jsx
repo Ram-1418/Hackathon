@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, {useState } from 'react';
+import { auth, signInWithEmailAndPassword } from "../firebase";
+
 
 const Register = () => {
   // State for form fields
@@ -8,12 +10,22 @@ const Register = () => {
   // State for form errors
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const handleLogin = async (email, password) => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      // User is signed in
+      console.log("User signed in:", user);
+      // Redirect to the appropriate page or perform other actions
+    } catch (error) {
+      console.error("Error signing in:", error);
+      // Handle login errors (e.g., invalid credentials)
+    }
+  };
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-
     // Validate form fields
     const validationErrors = validateForm({ email, password });
     if (Object.keys(validationErrors).length > 0) {
@@ -23,8 +35,7 @@ const Register = () => {
     }
 
     // Submit form data (you can replace this with a call to your backend)
-    console.log('Form submitted with:', { email, password });
-
+    handleLogin(email, password)
     // Reset form
     setEmail('');
     setPassword('');
@@ -54,7 +65,7 @@ const Register = () => {
   return (
     <div className="bg-gray-100 min-h-screen flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
-        <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center">Login With Email</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">Email</label>
