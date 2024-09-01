@@ -10,14 +10,21 @@ import Contact from './components/Contact.jsx'
 import Register from './components/Register.jsx'
 import Quiz from './components/Quiz.jsx'
 import Apppointment from './components/Apppointment.jsx'
+
+import App from './components/App.jsx'
+
 import Login from './components/Login.jsx'
 import Dashboard from './components/Dashboard.jsx'
 import QuizForm from './components/QuizForm.jsx'
 
+
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<Layout />}>
-      <Route path='' element={<Home />} />
+      <Route path='' element={<>
+        <Home />
+        
+        </>} />
       <Route path='/services' element={<Services />} />
       <Route path='/about' element={<About />} />
       <Route path='/contact' element={<Contact />} />

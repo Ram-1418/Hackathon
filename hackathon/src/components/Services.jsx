@@ -36,7 +36,7 @@ function Services() {
               <div className="p-4">
                 <h3 className="text-lg font-bold mb-2">{service.name}</h3>
                 <p className="text-gray-600"></p>
-                <button className="mx-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleBookAppointment}>
+                <button className="mx-auto bg-blue-500 hover:bg-blue-700  opacity-75 text-white font-bold py-2 px-4 rounded" onClick={handleBookAppointment}>
                 Book Appointment
                 </button>
               </div>
