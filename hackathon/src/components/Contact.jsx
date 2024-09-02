@@ -4,34 +4,17 @@ function Contact() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  // const handleSubmit = (event) => {
-  //   event.preventDefault();
-
-  //   db.collection("forms")
-  //     .add({
-  //       name: name,
-  //       email: email,
-  //       message: message,
-  //     })
-  //     .then((docRef) => {
-  //       console.log("Document written with ID: ", docRef.id);
-  //       alert("Form submitted");
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error adding document: ", error);
-  //       alert("Error while submitting data");
-  //     });
-
-  //   console.log("Form submitted:", { name, email, message });
-  // };
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log("Form submitted:", { name, email, message });
+  };
 
   return (
     <div className="container mx-auto pt-[80px] p-8">
       <h2 className="text-3xl font-bold mb-6 text-center">Contact Us</h2>
       <form onSubmit={handleSubmit} className="w-full max-w-lg mx-auto">
         <div
-          className="
-mb-4"
+          className="mb-4"
         >
           <label htmlFor="name" className="block text-gray-700 font-bold mb-2">
             Name
