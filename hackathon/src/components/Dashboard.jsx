@@ -40,7 +40,6 @@ function Dashboard() {
   };
   const fetchDoctorData = async () => {
     const user = auth.currentUser; // Get the currently logged-in user
-
     if (user) {
       // Check if a user is signed in
       const docRef = doc(db, "doctors", user.uid); // Use "doctors" collection
@@ -58,38 +57,35 @@ function Dashboard() {
       return null;
     }
   };
-
   useEffect(() => {
     const fetchUser = async () => {
       const data = await (isDoctor ? fetchDoctorData() : fetchUserData());
       console.log(data);
       setUserData(data);
-      const quizResponsesCollectionRef = collection(db, 'quizResponses');
+      const quizResponsesCollectionRef = collection(db, "quizResponses");
 
-// Fetch all documents from the collection
-getDocs(quizResponsesCollectionRef)
-  .then((snapshot) => {
-    const allResponses = []
-    // Loop through each document in the snapshot
+      // Fetch all documents from the collection
+      getDocs(quizResponsesCollectionRef)
+        .then((snapshot) => {
+          const allResponses = [];
 
-    snapshot.docs.forEach((doc) => {
-      // Get the document data
-      const data = doc.data();
-      allResponses.push(data)
-      // Do something with the data, for example, log it to the console
-      console.log(data);
-    });
-    setResponses(allResponses)
-    console.log(allResponses);
-  })
-  .catch((error) => {
-    console.error("Error getting documents: ", error);
-  });
+          snapshot.docs.forEach((doc) => {
+            // Get the document data
+            const data = doc.data();
+            allResponses.push(data);
+            console.log(data);
+          });
+          setResponses(allResponses);
+          console.log(allResponses);
+        })
+        .catch((error) => {
+          console.error("Error getting documents: ", error);
+        });
     };
 
     fetchUser();
-  }, [userData]); // Run only once on component mount
-  console.log(userData);
+  }, []); // Run only once on component mount
+
   return (
     <div className="bg-gray-100 min-h-screen flex">
       {/* Sidebar */}
@@ -211,14 +207,10 @@ getDocs(quizResponsesCollectionRef)
             <h2 className="text-2xl font-semibold mb-4">Submitted Reports</h2>
             {/* Display submitted reports here */}
             <p>No reports submitted yet.</p>
-            
-            {
-              responses.map((data,idx)=>{
-                return <div>
-                  {data.userId}
-                </div>
-              })
-            }
+
+            {responses.map((data, idx) => {
+              return <div>{data.userId}</div>;
+            })}
           </div>
         )}
         {activeTab === "Quiz" && (

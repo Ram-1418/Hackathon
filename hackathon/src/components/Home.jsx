@@ -21,9 +21,9 @@ function Home() {
           </h1>
           <p className="text-xl mb-8">Your Gateway to Mental Wellness</p>
           <button
-            className="bg-white text-blue-500 font-semibold py-2 px-6 rounded shadow"
+            className="bg-white text-blue-500 font-semibold py-2 px-6 rounded shadow hover:scale-95 duration-100 ease-in-out"
 
-            onClick={()=>{navigate('/register')}}
+            onClick={()=>{navigate('/login')}}
 
           >
             Start Your Journey

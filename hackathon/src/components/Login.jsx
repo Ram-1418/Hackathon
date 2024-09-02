@@ -117,7 +117,7 @@ function Login() {
     </button>
   </div>
 </div>;
-const loginDoctor =  <div className="bg-white p-8 rounded-lg shadow-lg max-w-[500px] w-full">
+const loginDoctor =  <div className=" p-8 rounded-lg shadow-lg max-w-[500px] w-full">
 <h2 className="text-2xl font-bold mb-6 text-center">Login With Email</h2>
 <form onSubmit={handleSubmit}>
   <div className="mb-4">
@@ -163,7 +163,7 @@ const loginDoctor =  <div className="bg-white p-8 rounded-lg shadow-lg max-w-[50
   
     return (
       <div
-        className="flex flex-col items-center justify-center h-screen w-full bg-center bg-cover bg-no-repeat"
+        className="flex flex-col items-center justify-center h-screen w-screen bg-center bg-cover bg-no-repeat"
         style={{
           backgroundImage: "url(./mesh.png)",
           backdropFilter: "blur(2px)",
