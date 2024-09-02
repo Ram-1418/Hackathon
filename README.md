@@ -47,8 +47,7 @@ HealthFirst is a mental health and wellness portal designed to help users assess
    
 4. **Scheduling Meetings**:
    - Based on the assessment, doctors can schedule a consultation with the user.
-## Live Demo 
-### [See Live](https://5173-idx-hackathon-1725078023216.cluster-3g4scxt2njdd6uovkqyfcabgo6.cloudworkstations.dev/)
+   - 
 ## **Future Goals**
 - **AI Integration**:
   - We aim to integrate an AI system that will assist doctors by analyzing the assessments and providing preliminary insights. This will make the diagnosis process quicker and more efficient.
