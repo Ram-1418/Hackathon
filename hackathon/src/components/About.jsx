@@ -28,7 +28,6 @@ function About() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl hover:bg-cyan-500 transition duration-200 border-solid border-2 border-sky-500">
             <img src="./about-icon2.png" alt="" />
-            {/* <h2 className="text-2xl font-bold mb-4">Skill Academy</h2> */}
             <p className="text-gray-700">
               Provide quality mental health services and support by carefully
               vetting and selecting a team of experts
@@ -36,7 +35,7 @@ function About() {
           </div>
           <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl hover:bg-cyan-500 transition duration-200 border-solid border-2 border-sky-500">
             <img src="./icon1.png" alt="" />
-            {/* <h2 className="text-2xl font-bold mb-4">Raise Awareness & Build Advocacy</h2> */}
+          
             <p className="text-gray-700">
               Respond and treat every individual with respect and dignity, while
               empowering them to have their own voice and encouraging them to
@@ -45,7 +44,6 @@ function About() {
           </div>
           <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl hover:bg-cyan-500 transition duration-200 border-solid border-2 border-sky-500">
             <img src="./about-icon3.png" alt="" />
-            {/* <h2 className="text-2xl font-bold mb-4">Paid Consultation</h2> */}
             <p className="text-gray-700">
               Continually learning, researching and creating more efficient
               methods to reach and serve the community optimally
@@ -66,28 +64,18 @@ function About() {
         mental health support service is accessible 24 hours a day, 365 days a
         year.
       </p></div>
-      {/* our team */}
       <h1 className="text-3xl font-bold text-center mb-8 pt-8">Our Team</h1>
       <div className=" container flex justify-center gap-8 py-9">
-        {/* <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl hover:bg-cyan-200 transition duration-200 border-solid border-2 border-sky-500 ">
-          <img className="rounded-full h-[200px]" src="./sonu2.webp" alt="" />
-          <p className="text-gray-700 text-center p-5 font-bold text-2xl">
-            Sonu Shivcharan
-          </p>
-          <p className="text-gray-700 text-center p-5 font-bold text-xl">
-            Backed Developer
-          </p>
-        </div> */}
         {
-          developers.map(function(developer){
+          developers.map(({name, image, role}, idx)=>{
             return( 
-            <div className="max-w-[250px] bg-white rounded-lg shadow-md p-2 hover:shadow-xl hover:bg-cyan-500 transition duration-200 border-solid border border-sky-500 text-gray-700">
-            <img className="rounded-lg w-full" src={developer.image} alt="" />
+            <div key={name+idx} className="max-w-[250px] bg-white rounded-lg shadow-md p-2 hover:shadow-xl hover:bg-cyan-500 transition duration-200 border-solid border border-sky-500 text-gray-700">
+            <img className="rounded-lg w-full" src={image} alt="" />
             <p className="text-center p-2 font-bold text-2xl">
-              {developer.name}
+              {name}
             </p>
             <p className=" text-center p-2 font-bold text-lg">
-              {developer.role}
+              {role}
             </p>
           </div> )
           })

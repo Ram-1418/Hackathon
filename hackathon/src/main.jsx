@@ -10,11 +10,8 @@ import Contact from './components/Contact.jsx'
 import Register from './components/Register.jsx'
 import Quiz from './components/Quiz.jsx'
 import Apppointment from './components/Apppointment.jsx'
-
-import App from './components/App.jsx'
-
 import Login from './components/Login.jsx'
-import Dashboard from './components/Dashboard.jsx'
+import Dashboard from './components/Dashboard/Dashboard.jsx'
 import QuizForm from './components/QuizForm.jsx'
 
 
@@ -23,7 +20,6 @@ const router = createBrowserRouter(
     <Route path='/' element={<Layout />}>
       <Route path='' element={<>
         <Home />
-        
         </>} />
       <Route path='/services' element={<Services />} />
       <Route path='/about' element={<About />} />
@@ -35,14 +31,6 @@ const router = createBrowserRouter(
       <Route path='/quiz-form' element={<QuizForm />} />
       <Route path='/login/:doctor' element={<Login />} />
       <Route path='/login' element={<Login />} />
-      {/* <Route path='about' element={<About />} />
-      <Route path='contact' element={<Contact />} />
-      <Route path='user/:userid' element={<User />} />
-      <Route 
-      loader={githubInfoLoader}
-      path='github' 
-      element={<Github />}
-       /> */}
     </Route>
   )
 )
