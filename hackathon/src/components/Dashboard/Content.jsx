@@ -1,13 +1,18 @@
-import React from 'react'
-import Profile from './Profile'
+import React from "react";
+import Profile from "./Profile";
+import Reports from "./Reports";
 
-function Content({responses, userData}) {
-  console.log(responses, userData)
-  return (
-    <div className='flex-1 p-8'>
-      <Profile userData={userData}/>
-    </div>
-  )
+function Content({ responses, userData, activeTab }) {
+  console.log(responses, userData);
+  let currentComponent;
+  if (activeTab === "Profile") {
+    currentComponent = <Profile userData={userData} />;
+  } else if (activeTab === "Reports") {
+    currentComponent = <Reports/>;
+  } else {
+    currentComponent = <div>SubmittedReports</div>;
+  }
+  return <div className="flex-1 p-8">{currentComponent}</div>;
 }
 
-export default Content
+export default Content;

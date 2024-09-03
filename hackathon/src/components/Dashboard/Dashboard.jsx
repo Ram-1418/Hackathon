@@ -9,6 +9,7 @@ function Dashboard() {
   const { doctor } = useParams();
   const isDoctor = doctor === "doctor";
   const [responses, setResponses] = useState([]);
+  const [activeTab, setActiveTab] = useState("Profile");
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
   const handleTabClick = (tab) => {
@@ -87,8 +88,9 @@ function Dashboard() {
 
   return (
     <div className="bg-gray-100 min-h-screen flex">
-      <Sidebar/>
-      <Content responses={responses} userData={userData} />
+      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Content responses={responses} userData={userData} activeTab={activeTab} />
+
     </div>
   );
 }

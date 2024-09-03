@@ -8,7 +8,7 @@ function Home() {
       {/* Hero Section */}
 
       <section
-        className=" text-white py-20 bg-cover bg-center min-h-[500px] flex flex-wrap justify-center items-center flex-col"
+        className=" text-white py-20 bg-cover bg-top min-h-[550px] flex flex-wrap justify-center items-center flex-col"
         style={{
           backgroundImage:
             " linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 80, 250, 0.5)),url(./hero.jpg)",
