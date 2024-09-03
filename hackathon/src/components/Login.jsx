@@ -33,7 +33,6 @@ function Login() {
     } catch (error) {
       console.error("Error signing in:", error);
       alert("inavild credentials")
-      // Handle login errors (e.g., invalid credentials)
     }
   };
   // Handle form submission
@@ -49,12 +48,12 @@ function Login() {
     }
 
     // Submit form data (you can replace this with a call to your backend)
-    handleLogin(email, password);
+    
     // Reset form
     setEmail("");
     setPassword("");
     setErrors({});
-   
+    handleLogin(email, password);
     setIsSubmitting(false);
   };
   const validateForm = (values) => {
