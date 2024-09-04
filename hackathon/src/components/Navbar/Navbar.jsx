@@ -5,7 +5,7 @@ import Sidenav from "./Sidenav";
 function Navbar() {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const [scrollTop, setScrollTop] = useState(0);
-  const [sidenavState, setSidenavState] = useState("250")
+  const [sidenavState, setSidenavState] = useState("-250");
   window.addEventListener("scroll", () => {
     setScrollTop(window.scrollY);
   });
@@ -23,15 +23,32 @@ function Navbar() {
     <nav className="text-black p-4 h-30 fixed w-full z-10" style={navStyle}>
       <div className="container mx-auto  m-auto flex justify-between items-center">
         <div className="flex items-center">
-        <span className="text-3xl font-bold px-2" onClick={()=>{setSidenavState(0)}}>=</span>
-        <Link to="/" className="text-2xl font-bold">
-          <h1> HealthFirst </h1>
-        </Link>
+          <span id="menu-icon"
+            className="text-gray-800 pt-1 px-2"
+            onClick={() => {
+              setSidenavState(0);
+            }}
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect x="4" y="6" width="16" height="3" fill="currentColor" />
+              <rect x="4" y="11" width="16" height="3" fill="currentColor" />
+              <rect x="4" y="16" width="16" height="3" fill="currentColor" />
+            </svg>
+          </span>
+          <Link to="/" className="text-2xl font-bold">
+            <h1> HealthFirst </h1>
+          </Link>
         </div>
         {screenWidth > 580 ? (
           <NavItems />
         ) : (
-          <Sidenav setSidenavState={sidenavState}>
+          <Sidenav sidenavState={sidenavState} setSidenavState={setSidenavState }>
             <NavItems isSidenav={true} />
           </Sidenav>
         )}

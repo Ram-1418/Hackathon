@@ -19,25 +19,44 @@ function Profile({ userData, isDoctor }) {
             <h3 className="text-xl font-semibold text-gray-800">
               {userData?.displayName}
             </h3>
-            {/* Display other user data as needed */}
           </div>
         </div>
-        <div className="mt-4 p-2">
-          <label htmlFor="email" className="font-bold p-2">
-            Email
-          </label>
-          <br/>
-          <input
-            type="email"
-            id="email"
-            value={userData?.email}
-            name="email"
-            className="min-w-[300px] p-2 my-3 border border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
-            readOnly
-          />
+        <div className="grid md:grid-cols-2 px-10 w-full gap-8">
+          <div className="mb-4 ">
+            <label
+              htmlFor="email"
+              className="block text-gray-700 font-semibold"
+            >
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={userData?.email}
+              name="email"
+              className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
+              readOnly
+            />
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="phone"
+              className="block text-gray-700 font-semibold"
+            >
+              Phone Number
+            </label>
+            <input
+              type="tel"
+              id="phone"
+              value={userData?.phone}
+              name="phone"
+              className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
+              readOnly
+            />
+          </div>
+          </div>
         </div>
       </div>
-    </div>
   );
 }
 
