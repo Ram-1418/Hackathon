@@ -37,6 +37,20 @@ function Sidebar({ activeTab, setActiveTab }) {
         />
       </svg>,
     ],
+    ["Mental Health Assessment",<svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="h-6 w-6 mr-2"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M12 2a10 10 0 00-10 10c0 4.97 3.5 9 8 9.74V22a2 2 0 004 0v-.26c4.5-.74 8-4.77 8-9.74A10 10 0 0012 2zm0 16c-3.39 0-6-2.69-6-6 0-1.72 1.38-4.02 4-4.78V6a2 2 0 014 0v1.22c2.62.76 4 3.06 4 4.78 0 3.31-2.61 6-6 6z"
+    />
+  </svg>],
     [
       "Submitted Reports",
       <svg

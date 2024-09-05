@@ -29,7 +29,6 @@ function Login() {
       // User is signed in
       console.log("User signed in:", user);
       navigate("/dashboard/doctor");
-      // Redirect to the appropriate page or perform other actions
     } catch (error) {
       console.error("Error signing in:", error);
       alert("inavild credentials");
@@ -47,12 +46,11 @@ function Login() {
     }
 
     // Submit form data (you can replace this with a call to your backend)
-
+    handleLogin(email, password);
     // Reset form
     setEmail("");
     setPassword("");
     setErrors({});
-    handleLogin(email, password);
     setIsSubmitting(false);
   };
   const validateForm = (values) => {

@@ -12,9 +12,7 @@ function Dashboard() {
   const [activeTab, setActiveTab] = useState("Profile");
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
-  const handleTabClick = (tab) => {
-    setActiveTab(tab);
-  };
+
 
   const fetchUserData = async () => {
     const user = auth.currentUser; // Get the currently logged-in user
@@ -64,23 +62,6 @@ function Dashboard() {
       setUserData(data);
       const quizResponsesCollectionRef = collection(db, "quizResponses");
 
-      // Fetch all documents from the collection
-      getDocs(quizResponsesCollectionRef)
-        .then((snapshot) => {
-          const allResponses = [];
-
-          snapshot.docs.forEach((doc) => {
-            // Get the document data
-            const data = doc.data();
-            allResponses.push(data);
-            console.log(data);
-          });
-          setResponses(allResponses);
-          console.log(allResponses);
-        })
-        .catch((error) => {
-          console.error("Error getting documents: ", error);
-        });
     };
 
     fetchUser();
@@ -89,8 +70,7 @@ function Dashboard() {
   return (
     <div className="bg-gray-100 min-h-screen flex">
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-      <Content responses={responses} userData={userData} activeTab={activeTab} />
-
+      <Content responses={responses} userData={userData} activeTab={activeTab} isDoctor={isDoctor}/>
     </div>
   );
 }

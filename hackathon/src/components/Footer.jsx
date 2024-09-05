@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 function Footer() {
   return (
@@ -30,12 +31,15 @@ function Footer() {
          <p>privacy policy</p>
          <p>term& condition</p>
          <p>refund and cancellation</p>
+         <Link to="/login/doctor">
+          Doctors Login
+         </Link>
         </ul>
       </div>
       <div className="flex flex-col items-center">
         <h3 className="font-bold text-lg mb-2">Recent Posts</h3>
         <ul className="text-white">
-         <p>post traumatic growth</p>
+         <p>Post traumatic growth</p>
          <p>understanding trauma</p>
        
         </ul>
