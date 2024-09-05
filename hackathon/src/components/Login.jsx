@@ -8,8 +8,9 @@ import {
 import { doc, setDoc } from "firebase/firestore"; // Import Firestore functions
 import { db } from "../firebase"; // Assuming you have a db instance for Firestore
 import { useNavigate, useParams } from "react-router-dom";
-
+import Loader from "./Loader"
 function Login() {
+  const [isLoggingin, setLogging] = useState(false);
   const { doctor } = useParams();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -19,6 +20,7 @@ function Login() {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const handleLogin = async (email, password) => {
+    setLogging(true)
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
@@ -29,6 +31,7 @@ function Login() {
       // User is signed in
       console.log("User signed in:", user);
       navigate("/dashboard/doctor");
+      setLogging(false);
     } catch (error) {
       console.error("Error signing in:", error);
       alert("inavild credentials");
@@ -73,6 +76,7 @@ function Login() {
   const isDoctor = doctor === "doctor";
 
   const handleGoogleLogin = async () => {
+    setLogging(true)
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
@@ -88,6 +92,7 @@ function Login() {
       });
 
       console.log("User signed in and data stored:", user);
+      setLogging(false)
       navigate("/dashboard/user");
     } catch (error) {
       console.error("Error signing in:", error);
@@ -151,9 +156,9 @@ function Login() {
         <button
           type="submit"
           className="bg-blue-500 text-white font-bold py-2 px-4 rounded w-full"
-          disabled={isSubmitting}
+          disabled={isLoggingin}
         >
-          {isSubmitting ? "Logging in.." : "Login"}
+          {isLoggingin ? "Logging in.." : "Login"}
         </button>
       </form>
   );
@@ -166,6 +171,7 @@ function Login() {
         backdropFilter: "blur(2px)",
       }}
     >
+      {isLoggingin && <Loader>Logging In..</Loader>}
       <div className="bg-white p-9 max-w-[500px] w-full rounded-xl shadow-md ">
       <h1 className="text-4xl text-center font-bold text-blue-950 mb-10">
         HealthFirst

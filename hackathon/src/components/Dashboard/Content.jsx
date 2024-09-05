@@ -14,9 +14,9 @@ function Content({ responses, userData, activeTab, isDoctor }) {
   }else if(activeTab==="Mental Health Assessment"){
     currentComponent = <MentalHealthAssessmentForm/>
   } else {
-    currentComponent = <SubmittedReports isDoctor={isDoctor}/>;
+    currentComponent = <SubmittedReports isDoctor={isDoctor} currentUserId={userData?.uid}/>;
   }
-  return <div className="flex-1 p-8">{currentComponent}</div>;
+  return <div className="flex-1 p-8 h-screen overflow-y-auto">{currentComponent}</div>;
 }
 
 export default Content;

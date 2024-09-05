@@ -5,12 +5,12 @@ function About() {
     {
       name:"Sonu Shivcharan",
       role:"Backed Developer",
-      image:"./sonu2.webp"
+      image:"./shivcharan.jfif"
     },
     {
       name:"Jayesh Pandhare",
       role:"Frontend Developer",
-      image:"./sonu2.webp"
+      image:"./jayesh.webp"
     },
     {
       name:"Rameshwar Patil",
@@ -70,7 +70,7 @@ function About() {
           developers.map(({name, image, role}, idx)=>{
             return( 
             <div key={name+idx} className="max-w-[250px] bg-white rounded-lg shadow-md p-2 hover:shadow-xl hover:bg-cyan-500 transition duration-200 border-solid border border-sky-500 text-gray-700">
-            <img className="rounded-lg w-full" src={image} alt="" />
+            <img className="rounded-full h-[210px] w-full" src={image} alt="" />
             <p className="text-center p-2 font-bold text-2xl">
               {name}
             </p>

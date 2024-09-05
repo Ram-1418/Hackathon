@@ -70,7 +70,7 @@ function Sidebar({ activeTab, setActiveTab }) {
     ],
   ];
   return (
-    <div className="bg-white w-64 shadow-md">
+    <div className="bg-white w-64 shadow-md h-screen">
       <div className="p-6">
         {tabs.map(([tabName, svgIcon]) => {
           return (

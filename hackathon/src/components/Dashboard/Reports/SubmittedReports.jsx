@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { auth, database, db } from "../../../firebase";
 import { ref, onValue } from "firebase/database";
 import { doc, getDoc } from "firebase/firestore";
+import Loader from "../../Loader";
 const getUserDataByUid = async (uid) => {
   try {
     // Reference to the document using the uid
@@ -21,26 +22,41 @@ const getUserDataByUid = async (uid) => {
   }
 };
 
-function SubmittedReports({ isDoctor }) {
-  const user = isDoctor ? "" : auth.uid;
+function SubmittedReports({ isDoctor, currentUserId }) {
+  const [isDataLoading, setLoading]= useState(false);
   const [userIds, setUserIds] = useState([]);
   const [submittedReports, setSubmittedReports] = useState([]);
   const [userInfo, setUserInfo] = useState([]);
+  const [timestamps, setTimestamps] = useState([]);
+  //
   useEffect(() => {
-    const getSubmittedReportsRef = ref(database, "reports/"+user);
+    const user = isDoctor ? "" : currentUserId;
+    console.log("current user",currentUserId)
+    setLoading(true)
+    const query = `reports/${user}`;
+    console.log(query, user)
+    const getSubmittedReportsRef = ref(database,query);
     onValue(getSubmittedReportsRef, (snapshot) => {
       const data = snapshot.val();
+      console.log(data)
       setSubmittedReports(data);
       // console.log("submitted reports",data);
-      setUserIds(Object.keys(data ?? {}));
+      setLoading(false)
+      const keys = Object.keys(data ?? {});
+      isDoctor && setUserIds(keys);
+      !isDoctor && setTimestamps(keys);
+      log
+      
     });
   }, []);
-  console.log("submitted reports", submittedReports);
-  useEffect(() => {
+ // console.log("submitted reports", submittedReports);
+ useEffect(() => {
+    setLoading(true)
     const fetchData = async () => {
       const promises = userIds.map((userId) => getUserDataByUid(userId));
       const data = await Promise.all(promises);
       setUserInfo(data);
+      setLoading(false)
     };
 
     if (userIds.length > 0) {
@@ -51,10 +67,11 @@ function SubmittedReports({ isDoctor }) {
   //console.log(userInfo);
   return (
     <div>
+      {isDataLoading && <Loader>Loading Reports..</Loader>}
       <h2 className="text-2xl font-semibold mb-4 text-center">
         Submitted Reports
       </h2>
-      {userInfo.map((data, idx) => {
+      {/* {userInfo.map((data, idx) => {
         const timestamp = Number(Object.keys(submittedReports[data.uid])[0]);
         const date = new Date(timestamp);
         console.log(date);
@@ -70,7 +87,8 @@ function SubmittedReports({ isDoctor }) {
             </div>
           </div>
         );
-      })}
+      })} */}
+      {!isDoctor && Object.keys(submittedReports)[0]}
     </div>
   );
 }
