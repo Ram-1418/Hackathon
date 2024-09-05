@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 
 import { database, auth } from "../../firebase"; // Ensure your firebase.js exports 'db'
 import {ref, set } from "firebase/database";
@@ -19,7 +19,7 @@ const submitReportToRTDB = async (userId, reportData) => {
     }
   };
 
-function MentalHealthAssessmentForm() {
+function MentalHealthAssessmentForm({reportData, disableFields}) {
   const [formData, setFormData] = useState({
     mood: "",
     sleepQuality: "",
@@ -32,6 +32,23 @@ function MentalHealthAssessmentForm() {
     type:"mental-health"
   });
 
+useEffect(()=>{
+  if (reportData) {
+    setFormData(reportData);
+  }else{
+    setFormData({
+      mood: "",
+      sleepQuality: "",
+      stressLevel: "",
+      anxietyLevel: "",
+      energyLevel: "",
+      appetite: "",
+      suicidalThoughts: "",
+      additionalNotes: "",
+      type:"mental-health"
+    })
+  }
+},[reportData]);
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -76,6 +93,7 @@ function MentalHealthAssessmentForm() {
             onChange={handleChange}
             className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring focus:ring-blue-200"
             required
+            disabled={disableFields}
           >
             <option value="">Select Mood</option>
             <option value="Very Happy">Very Happy</option>
@@ -97,6 +115,7 @@ function MentalHealthAssessmentForm() {
             onChange={handleChange}
             className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring focus:ring-blue-200"
             required
+            disabled={disableFields}
           >
             <option value="">Select Sleep Quality</option>
             <option value="Excellent">Excellent</option>
@@ -118,6 +137,7 @@ function MentalHealthAssessmentForm() {
             onChange={handleChange}
             className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring focus:ring-blue-200"
             required
+            disabled={disableFields}
           >
             <option value="">Select Stress Level</option>
             <option value="Not Stressed">Not Stressed</option>
@@ -139,6 +159,7 @@ function MentalHealthAssessmentForm() {
             onChange={handleChange}
             className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring focus:ring-blue-200"
             required
+            disabled={disableFields}
           >
             <option value="">Select Anxiety Level</option>
             <option value="Not Anxious">Not Anxious</option>
@@ -160,6 +181,7 @@ function MentalHealthAssessmentForm() {
             onChange={handleChange}
             className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring focus:ring-blue-200"
             required
+            disabled={disableFields}
           >
             <option value="">Select Energy Level</option>
             <option value="Very Energetic">Very Energetic</option>
@@ -181,6 +203,7 @@ function MentalHealthAssessmentForm() {
             onChange={handleChange}
             className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring focus:ring-blue-200"
             required
+            disabled={disableFields}
           >
             <option value="">Select Appetite Level</option>
             <option value="Very Good">Very Good</option>
@@ -202,6 +225,7 @@ function MentalHealthAssessmentForm() {
             onChange={handleChange}
             className="w-full p-3 border border-gray-300 rounded-lg focus:border-red-500 focus:ring focus:ring-red-200"
             required
+            disabled={disableFields}
           >
             <option value="">Select an Option</option>
             <option value="No">No</option>
@@ -222,17 +246,18 @@ function MentalHealthAssessmentForm() {
             placeholder="Feel free to share any additional thoughts or feelings."
             className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring focus:ring-blue-200"
             rows="4"
+            disabled={disableFields}
           />
         </div>
 
         {/* Submit Button */}
         <div className="text-center">
-          <button
+          {!disableFields && <button
             type="submit"
             className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 focus:outline-none"
           >
             Submit Assessment
-          </button>
+          </button>}
         </div>
       </form>
     </div>
