@@ -97,7 +97,7 @@ function SubmittedReports({ isDoctor, currentUserId, setCurrentComponent }) {
           const date = new Date(timestamp);
           return (
             <div
-              key={idx + data.uid}
+              key={idx + data?.uid}
               className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-lg mt-6"
             >
               <div className="font-bold text-2xl mb-4">{data.displayName}</div>
@@ -112,7 +112,7 @@ function SubmittedReports({ isDoctor, currentUserId, setCurrentComponent }) {
                 onClick={()=>{ 
                   setReportVisible(true);
                  // setSelectedReport(submittedReports[timestamp]);
-                 const reports = submittedReports[data.uid]
+                 const reports = submittedReports[data?.uid]
                   setSelectedReport(reports);
                   setSelectedReportInfo(data);
 
