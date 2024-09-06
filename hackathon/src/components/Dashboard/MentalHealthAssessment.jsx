@@ -29,7 +29,8 @@ function MentalHealthAssessmentForm({reportData, disableFields}) {
     appetite: "",
     suicidalThoughts: "",
     additionalNotes: "",
-    type:"mental-health"
+    type:"mental-health",
+    apppointment:false
   });
 
 useEffect(()=>{
@@ -45,11 +46,17 @@ useEffect(()=>{
       appetite: "",
       suicidalThoughts: "",
       additionalNotes: "",
-      type:"mental-health"
+      type:"mental-health",
+      appointment:false
     })
   }
 },[reportData]);
   const handleChange = (e) => {
+    if(e.target.type=="checkbox"){
+      console.log(e.target.checked)
+      setFormData({ ...formData, [e.target.name]: e.target.checked });
+      return;
+    }
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -248,8 +255,21 @@ useEffect(()=>{
             rows="4"
             disabled={disableFields}
           />
-        </div>
 
+        </div>
+        <div className="mb-6">
+         
+          <input
+            type="checkbox"
+            name="appointment"
+            value={formData.appointment}
+            checked={formData.appointment}
+            onChange={handleChange}
+            className="p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring focus:ring-blue-200"
+            /> <label className="mx-1 text-gray-700 font-semibold mb-2">
+            Do you want to book an appointment?
+          </label>
+        </div>
         {/* Submit Button */}
         <div className="text-center">
           {!disableFields && <button

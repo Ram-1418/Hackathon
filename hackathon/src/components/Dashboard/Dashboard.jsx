@@ -7,12 +7,16 @@ import Content from "./Content";
 
 function Dashboard() {
   const { doctor } = useParams();
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const isDoctor = doctor === "doctor";
   const [responses, setResponses] = useState([]);
   const [activeTab, setActiveTab] = useState("Profile");
+  const [isCollapsedSiderBar, setIsCollapsedSiderBar] = useState(true);
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
-
+  window.addEventListener("resize", () => {
+    setScreenWidth(window.innerWidth);
+  });
 
   const fetchUserData = async () => {
     const user = auth.currentUser; // Get the currently logged-in user
@@ -47,6 +51,7 @@ function Dashboard() {
         return docSnap.data(); // Return the doctor's data
       } else {
         console.log("No doctor document found!");
+        navigate("/login");
         return null;
       }
     } else {
@@ -60,17 +65,27 @@ function Dashboard() {
       const data = await (isDoctor ? fetchDoctorData() : fetchUserData());
       console.log(data);
       setUserData(data);
-      const quizResponsesCollectionRef = collection(db, "quizResponses");
-
+      //const quizResponsesCollectionRef = collection(db, "quizResponses");
     };
 
     fetchUser();
-  }, []); 
+  }, []);
 
   return (
     <div className="bg-gray-100 min-h-screen flex">
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-      <Content responses={responses} userData={userData} activeTab={activeTab} isDoctor={isDoctor}/>
+      <Sidebar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        isDoctor={isDoctor}
+        isCollapsedSiderBar={isCollapsedSiderBar}
+        setIsCollapsedSiderBar={setIsCollapsedSiderBar}
+      />
+      <Content
+        responses={responses}
+        userData={userData}
+        activeTab={activeTab}
+        isDoctor={isDoctor}
+      />
     </div>
   );
 }

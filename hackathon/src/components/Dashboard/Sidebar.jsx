@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function Sidebar({ activeTab, setActiveTab }) {
+function Sidebar({ activeTab, setActiveTab, isDoctor, isCollapsedSidebar }) {
   console.log(activeTab);
   const tabs = [
     [
@@ -20,21 +20,24 @@ function Sidebar({ activeTab, setActiveTab }) {
         />
       </svg>,
     ],
-   
-    ["Mental Health Assessment",<svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="h-6 w-6 mr-2"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M12 2a10 10 0 00-10 10c0 4.97 3.5 9 8 9.74V22a2 2 0 004 0v-.26c4.5-.74 8-4.77 8-9.74A10 10 0 0012 2zm0 16c-3.39 0-6-2.69-6-6 0-1.72 1.38-4.02 4-4.78V6a2 2 0 014 0v1.22c2.62.76 4 3.06 4 4.78 0 3.31-2.61 6-6 6z"
-    />
-  </svg>],
+
+    [
+      "Mental Health Assessment",
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-6 w-6 mr-2"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M12 2a10 10 0 00-10 10c0 4.97 3.5 9 8 9.74V22a2 2 0 004 0v-.26c4.5-.74 8-4.77 8-9.74A10 10 0 0012 2zm0 16c-3.39 0-6-2.69-6-6 0-1.72 1.38-4.02 4-4.78V6a2 2 0 014 0v1.22c2.62.76 4 3.06 4 4.78 0 3.31-2.61 6-6 6z"
+        />
+      </svg>,
+    ],
     [
       "Submitted Reports",
       <svg
@@ -54,9 +57,13 @@ function Sidebar({ activeTab, setActiveTab }) {
     ],
   ];
   return (
-    <div className="bg-white w-64 shadow-md h-screen">
+    <div
+      className="bg-white w-[250px] shadow-md h-screen"
+    >
+      <h2 className="text-2xl font-bold text-center py-4">Health First</h2>
       <div className="p-6">
         {tabs.map(([tabName, svgIcon]) => {
+          if (isDoctor && tabName === "Mental Health Assessment") return null;
           return (
             <div
               className={`flex items-center p-2 rounded-lg cursor-pointer mb-4 ${

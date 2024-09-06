@@ -38,25 +38,27 @@ function Profile({ userData, isDoctor }) {
               readOnly
             />
           </div>
-          <div className="mb-4">
-            <label
-              htmlFor="phone"
-              className="block text-gray-700 font-semibold"
-            >
-              Phone Number
-            </label>
-            <input
-              type="tel"
-              id="phone"
-              value={userData?.phone}
-              name="phone"
-              className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
-              readOnly
-            />
-          </div>
-          </div>
+          {userData?.phone && (
+            <div className="mb-4">
+              <label
+                htmlFor="phone"
+                className="block text-gray-700 font-semibold"
+              >
+                Phone Number
+              </label>
+              <input
+                type="tel"
+                id="phone"
+                value={userData?.phone}
+                name="phone"
+                className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
+                readOnly
+              />
+            </div>
+          )}
         </div>
       </div>
+    </div>
   );
 }
 

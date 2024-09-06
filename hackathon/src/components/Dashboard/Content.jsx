@@ -3,8 +3,10 @@ import Profile from "./Profile";
 import Reports from "./Reports/Reports";
 import MentalHealthAssessmentForm from "./MentalHealthAssessment";
 import SubmittedReports from "./Reports/SubmittedReports";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
 
-function Content({ responses, userData, activeTab, isDoctor }) {
+function Content({ responses, userData, activeTab, isDoctor,  setIsCollapsedSiderBar}) {
   const [currentComponent, setCurrentComponent] = useState(null);
 
   React.useEffect(() => {
@@ -22,7 +24,7 @@ function Content({ responses, userData, activeTab, isDoctor }) {
   }, [activeTab, userData, isDoctor]);
 
   return (
-    <div className="flex-1 p-8 h-screen overflow-y-auto">
+    <div className="flex-1 p-8 pt-12 h-screen overflow-y-auto">
       {currentComponent}
     </div>
   );

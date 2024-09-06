@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import NavItems from "./NavItems";
 import Sidenav from "./Sidenav";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
 function Navbar() {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const [scrollTop, setScrollTop] = useState(0);
@@ -29,17 +31,7 @@ function Navbar() {
               setSidenavState(0);
             }}
           >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <rect x="4" y="6" width="16" height="3" fill="currentColor" />
-              <rect x="4" y="11" width="16" height="3" fill="currentColor" />
-              <rect x="4" y="16" width="16" height="3" fill="currentColor" />
-            </svg>
+            <FontAwesomeIcon className="text-xl" icon={faBars}/>
           </span>
           <Link to="/" className="text-2xl font-bold">
             <h1> HealthFirst </h1>

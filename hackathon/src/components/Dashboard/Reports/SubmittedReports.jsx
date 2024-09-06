@@ -32,6 +32,7 @@ function SubmittedReports({ isDoctor, currentUserId, setCurrentComponent }) {
   const [timestamps, setTimestamps] = useState([]);
   const [isReportVisible, setReportVisible] = useState(false);
   const [selectedReport, setSelectedReport] = useState([]);
+  const [selectedReportInfo, setSelectedReportInfo] = useState({})
   //
   useEffect(() => {
     const user = isDoctor ? "" : currentUserId;
@@ -82,7 +83,7 @@ function SubmittedReports({ isDoctor, currentUserId, setCurrentComponent }) {
   return (
     <div>
       {isDataLoading && <Loader>Loading Reports..</Loader>}
-      {isReportVisible && <Reports selectedReport={selectedReport} setReportVisible={setReportVisible} />}
+      {isReportVisible && <Reports selectedReport={selectedReport} setReportVisible={setReportVisible} userInfo={selectedReportInfo} />}
       <h2 className="text-2xl font-semibold mb-4 text-center">
         Submitted Reports
       </h2>
@@ -94,7 +95,6 @@ function SubmittedReports({ isDoctor, currentUserId, setCurrentComponent }) {
             )[0]
           );
           const date = new Date(timestamp);
-          console.log(date);
           return (
             <div
               key={idx + data.uid}
@@ -114,6 +114,8 @@ function SubmittedReports({ isDoctor, currentUserId, setCurrentComponent }) {
                  // setSelectedReport(submittedReports[timestamp]);
                  const reports = submittedReports[data.uid]
                   setSelectedReport(reports);
+                  setSelectedReportInfo(data);
+
                 }}
                 className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition duration-300 ease-in-out">
                   View Report
