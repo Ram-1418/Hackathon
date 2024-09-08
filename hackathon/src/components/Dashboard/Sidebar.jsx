@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 
-function Sidebar({ activeTab, setActiveTab, isDoctor, isCollapsedSidebar }) {
-  console.log(activeTab);
+function Sidebar({ activeTab, setActiveTab, isDoctor, sidebarState, screenWidth}) {
+  console.log(screenWidth);
   const tabs = [
     [
       "Profile",
@@ -56,16 +56,21 @@ function Sidebar({ activeTab, setActiveTab, isDoctor, isCollapsedSidebar }) {
       </svg>,
     ],
   ];
+  const condition = sidebarState || screenWidth>580;
+  console.log(condition)
   return (
-    <div
+    <div id="sidebar"
       className="bg-white w-[250px] shadow-md h-screen"
+      style={{
+        marginLeft:`${condition?"0":"-250px"}`
+      }}
     >
       <h2 className="text-2xl font-bold text-center py-4">Health First</h2>
       <div className="p-6">
-        {tabs.map(([tabName, svgIcon]) => {
+        {tabs.map(([tabName, svgIcon], idx) => {
           if (isDoctor && tabName === "Mental Health Assessment") return null;
           return (
-            <div
+            <div key={idx + tabName}
               className={`flex items-center p-2 rounded-lg cursor-pointer mb-4 ${
                 activeTab === tabName
                   ? "bg-blue-500 text-white"

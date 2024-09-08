@@ -10,7 +10,15 @@
 #menu-icon{
     display: none;
 }
+
 @media (max-width:580px){
+    #sidebar{
+        margin-left: -250px;
+        position: fixed;
+        top:0;
+        left:0;
+        transition: 0.3s;
+    }
     #menu-icon{
         display: block;
     }

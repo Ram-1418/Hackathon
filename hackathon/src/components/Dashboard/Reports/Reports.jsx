@@ -9,8 +9,8 @@ function Reports({ selectedReport, setReportVisible, userInfo }) {
   console.log(selectedReport);
   return (
     <div className="h-screen w-screen fixed top-0 left-0 bg-slate-900/80 z-10 flex flex-col justify-center items-center">
-      <div className="max-w-[100vw] w-full h-full bg-white p-4 rounded-lg shadow-lg overflow-x-auto">
-        <div className="flex justify-around items-center fixed top-0 left-0 w-full mx-auto bg-white shadow-md p-3">
+      <div className="max-w-[100vw] w-full h-full bg-gray-100 p-4 rounded-lg shadow-lg overflow-x-auto">
+        <div className="flex justify-around items-center fixed top-0 left-0 w-full mx-auto bg-white shadow-md p-2">
           <FontAwesomeIcon
             onClick={() => {
               setReportVisible(false);
@@ -29,8 +29,8 @@ function Reports({ selectedReport, setReportVisible, userInfo }) {
             className="font-bold text-xl"
           />
         </div>
-        <div className="w-full pt-12">
-        <Profile userData={userInfo}/>
+        <div className="w-full pt-[100px]">
+        <Profile className="p-3" userData={userInfo}/>
           </div>
           {timestamps
             .sort((a, b) => Number(b) - Number(a))
@@ -48,7 +48,7 @@ function Reports({ selectedReport, setReportVisible, userInfo }) {
                   </div>
                   <div className="text-gray-700">
                     <span className="font-medium text-blue-600">Appointment:</span>{" "}
-                    {selectedReport[ts].appointment}
+                    {selectedReport[ts].appointment?"Yes":"No"}
                   </div>
                   <div className="text-gray-700">
                     

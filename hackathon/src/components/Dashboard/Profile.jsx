@@ -1,5 +1,4 @@
 import React from "react";
-
 function Profile({ userData, isDoctor }) {
   return (
     <div>
@@ -15,8 +14,10 @@ function Profile({ userData, isDoctor }) {
             alt="Profile"
             className="w-16 h-16 rounded-full mr-4"
           />
+        
           <div>
             <h3 className="text-xl font-semibold text-gray-800">
+              {isDoctor==true?"Dr. ":" "}
               {userData?.displayName}
             </h3>
           </div>
