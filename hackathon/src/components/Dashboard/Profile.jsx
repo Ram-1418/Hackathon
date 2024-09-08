@@ -1,6 +1,7 @@
 import React from "react";
 
 function Profile({ userData, isDoctor }) {
+  console.log(userData);
   return (
     <div>
       <h2 className="text-2xl font-semibold mb-4">Profile</h2>

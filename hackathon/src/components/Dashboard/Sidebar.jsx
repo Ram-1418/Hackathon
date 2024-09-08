@@ -62,10 +62,10 @@ function Sidebar({ activeTab, setActiveTab, isDoctor, isCollapsedSidebar }) {
     >
       <h2 className="text-2xl font-bold text-center py-4">Health First</h2>
       <div className="p-6">
-        {tabs.map(([tabName, svgIcon]) => {
+        {tabs.map(([tabName, svgIcon], idx) => {
           if (isDoctor && tabName === "Mental Health Assessment") return null;
           return (
-            <div
+            <div key={idx + tabName}
               className={`flex items-center p-2 rounded-lg cursor-pointer mb-4 ${
                 activeTab === tabName
                   ? "bg-blue-500 text-white"

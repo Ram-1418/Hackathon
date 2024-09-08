@@ -28,11 +28,20 @@ function Login() {
         password
       );
       const user = userCredential.user;
+      await setDoc(doc(db, "users", user.uid), {
+        uid: user.uid,
+        displayName: user.displayName,
+        email: user.email,
+        photoURL: user?.photoURL,
+        role: "user",
+        // Add any other relevant user data you want to store
+      });
       // User is signed in
       console.log("User signed in:", user);
       navigate("/dashboard/doctor");
       setLogging(false);
     } catch (error) {
+      setLogging(false);
       console.error("Error signing in:", error);
       alert("inavild credentials");
     }
@@ -95,6 +104,7 @@ function Login() {
       setLogging(false)
       navigate("/dashboard/user");
     } catch (error) {
+      setLogging(false)
       console.error("Error signing in:", error);
     }
   };
