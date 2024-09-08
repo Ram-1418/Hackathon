@@ -47,7 +47,8 @@ HealthFirst is a mental health and wellness portal designed to help users assess
    
 4. **Scheduling Meetings**:
    - Based on the assessment, doctors can schedule a consultation with the user.
-   - 
+   ## See it live
+   [https://health-first1.netlify.app/](https://health-first1.netlify.app/)
 ## **Future Goals**
 - **AI Integration**:
   - We aim to integrate an AI system that will assist doctors by analyzing the assessments and providing preliminary insights. This will make the diagnosis process quicker and more efficient.

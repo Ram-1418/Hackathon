@@ -108,7 +108,7 @@ function SubmittedReports({ isDoctor, currentUserId, setCurrentComponent }) {
           const date = new Date(timestamp);
           return (
             <div
-              key={idx + data.uid}
+              key={idx + data?.uid}
               className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-lg mt-6"
             >
               <div className="font-bold text-2xl mb-4">{data.displayName}</div>
@@ -128,6 +128,7 @@ function SubmittedReports({ isDoctor, currentUserId, setCurrentComponent }) {
                   }}
                   className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition duration-300 ease-in-out"
                 >
+
                   View Report
                 </button>
               </div>
