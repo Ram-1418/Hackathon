@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { doc, collection, getDoc, getDocs } from "firebase/firestore";
+import { doc, getDoc} from "firebase/firestore";
 import { db, auth } from "../../firebase";
 import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "./Sidebar";
@@ -11,7 +11,7 @@ function Dashboard() {
   const isDoctor = doctor === "doctor";
   const [responses, setResponses] = useState([]);
   const [activeTab, setActiveTab] = useState("Profile");
-  const [isCollapsedSiderBar, setIsCollapsedSiderBar] = useState(true);
+  const [sidebarState, setSidebarState] = useState(false);
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
   window.addEventListener("resize", () => {
@@ -22,11 +22,12 @@ function Dashboard() {
     const user = auth.currentUser; // Get the currently logged-in user
       const docRef = doc(db, "users", user.uid);
       const docSnap = await getDoc(docRef);
+      
       if (docSnap.exists()) {
         return docSnap.data(); // Return the user data
       } else {
         console.log("No user document found!");
-        navigate("/login/user");
+        navigate("/login");
         return null;
       }
   };
@@ -53,6 +54,11 @@ function Dashboard() {
   useEffect(() => {
     const fetchUser = async () => {
       const data = await (isDoctor ? fetchDoctorData() : fetchUserData());
+      console.log(data);
+      if(data==null){
+        isDoctor?navigate("/login/doctor"):navigate("/login");
+        return;
+      }
       setUserData(data);
       //const quizResponsesCollectionRef = collection(db, "quizResponses");
     };
@@ -62,18 +68,24 @@ function Dashboard() {
 
   return (
     <div className="bg-gray-100 min-h-screen flex">
+
       <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         isDoctor={isDoctor}
-        isCollapsedSiderBar={isCollapsedSiderBar}
-        setIsCollapsedSiderBar={setIsCollapsedSiderBar}
+        sidebarState={sidebarState}
+        setSidebarState={setSidebarState}
+        screenWidth={screenWidth}
       />
+
       <Content
+        navigate={navigate}
         responses={responses}
         userData={userData}
         activeTab={activeTab}
         isDoctor={isDoctor}
+        sidebarState={sidebarState}
+        setSidebarState={setSidebarState}
       />
     </div>
   );
