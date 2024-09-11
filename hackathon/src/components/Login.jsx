@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   auth,
   provider,
@@ -9,10 +9,11 @@ import { doc, setDoc } from "firebase/firestore"; // Import Firestore functions
 import { db } from "../firebase"; // Assuming you have a db instance for Firestore
 import { useNavigate, useParams } from "react-router-dom";
 import Loader from "./Loader"
+import { NavigateContext } from "../contexts/navigate";
 function Login() {
+  const {navigate} = useContext(NavigateContext);
   const [isLoggingin, setLogging] = useState(false);
   const { doctor } = useParams();
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 

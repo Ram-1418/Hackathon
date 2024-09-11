@@ -1,18 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { doc, getDoc} from "firebase/firestore";
 import { db, auth } from "../../firebase";
-import { useNavigate, useParams } from "react-router-dom";
+import {  useParams } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Content from "./Content";
+import { NavigateContext } from "../../contexts/navigate";
 
 function Dashboard() {
+
   const { doctor } = useParams();
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const isDoctor = doctor === "doctor";
-  const [responses, setResponses] = useState([]);
   const [activeTab, setActiveTab] = useState("Profile");
   const [sidebarState, setSidebarState] = useState(false);
-  const navigate = useNavigate();
+  const {navigate} = useContext(NavigateContext);
   const [userData, setUserData] = useState(null);
   window.addEventListener("resize", () => {
     setScreenWidth(window.innerWidth);
@@ -37,7 +38,6 @@ function Dashboard() {
       // Check if a user is signed in
       const docRef = doc(db, "doctors", user.uid); // Use "doctors" collection
       const docSnap = await getDoc(docRef);
-      console.log(docSnap.data());
       if (docSnap.exists()) {
         return docSnap.data(); // Return the doctor's data
       } else {
@@ -54,13 +54,11 @@ function Dashboard() {
   useEffect(() => {
     const fetchUser = async () => {
       const data = await (isDoctor ? fetchDoctorData() : fetchUserData());
-      console.log(data);
       if(data==null){
         isDoctor?navigate("/login/doctor"):navigate("/login");
         return;
       }
       setUserData(data);
-      //const quizResponsesCollectionRef = collection(db, "quizResponses");
     };
 
     fetchUser();
@@ -79,8 +77,6 @@ function Dashboard() {
       />
 
       <Content
-        navigate={navigate}
-        responses={responses}
         userData={userData}
         activeTab={activeTab}
         isDoctor={isDoctor}

@@ -1,8 +1,10 @@
-import React, { createContext } from "react";
-export const NavigateContext = createContext({});
+import  { createContext, useContext } from "react";
+export const NavigateContext = createContext({
+    navigate:()=>{},
+});
 
-export const NavigateProvider = ThemeContext.Provider
+export const NavigateProvider = NavigateContext.Provider
 
-export default function useNavigate(){
+export default function navigate(){
     return useContext(NavigateContext)
 }

@@ -5,11 +5,11 @@ function Footer() {
   return (
     <footer className="bg-gray-800 text-white p-6 text-center rounded-sm">
   <div className="container mx-auto"> 
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
       <div className="flex flex-col items-center">
         <h3 className="font-bold text-lg mb-2">Contact Us</h3>
         <ul className="text-white">
-          <li><a className='text-blue-400 hover:text-blue-600' href="#">contack@mentalhealthportal.com</a></li>
+          <li><a className='text-blue-400 hover:text-blue-600' href="#">contack@healthfirst.app</a></li>
           <li><a href="#">+9309839597</a></li>
           <li><a href="#">Center Timing :<br />Mon-Sat:9am to 8am</a></li>
           <li><a href="#">contact timing: <br />mon-sat: 9am  to 8am</a></li>

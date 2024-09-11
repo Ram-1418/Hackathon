@@ -42,7 +42,7 @@ function Reports({ selectedReport, setReportVisible, userInfo }) {
                 return today.toDateString() == date.toDateString();
               };
               return (
-                <div className="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md mt-8 space-y-4">
+                <div className="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md mt-8 space-y-4" key={idx+ts}>
                   <div className="text-xl font-bold text-gray-900 mb-4 text-center">
                     Report - {idx + 1}
                   </div>

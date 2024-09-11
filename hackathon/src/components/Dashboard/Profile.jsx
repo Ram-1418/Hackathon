@@ -1,5 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 function Profile({ userData, isDoctor }) {
+  const [userEmail, setUserEmail] = useState("");
+  useEffect(()=>{
+    setUserEmail(userData?.email)
+  },[userData])
   return (
     <div>
       <h2 className="text-2xl font-semibold mb-4">Profile</h2>
@@ -33,10 +37,10 @@ function Profile({ userData, isDoctor }) {
             <input
               type="email"
               id="email"
-              value={userData?.email}
+              value={userEmail}
               name="email"
               className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring focus:ring-blue-200 focus:outline-none"
-              readOnly
+              disabled={true}
             />
           </div>
           {userData?.phone && (
