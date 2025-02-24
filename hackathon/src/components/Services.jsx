@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Appointment from "./Apppointment";
+import AppointmentForm from "./Apppointment";
 function Services() {
   const navigate = useNavigate();
   const services = [
@@ -38,7 +40,7 @@ function Services() {
                 <p className="text-gray-600"></p>
                 <button
                 onClick={() => {
-                  navigate("/login");
+                  navigate("/appointments");
                 }}
                  className="mx-auto bg-blue-500 hover:bg-blue-700  opacity-75 text-white font-bold py-2 px-4 rounded" >
                 Book Appointment
