@@ -34,7 +34,7 @@ function Navbar() {
             <FontAwesomeIcon className="text-xl" icon={faBars}/>
           </span>
           <Link to="/" className="text-2xl font-bold">
-            <h1> HealthFirst </h1>
+       <img className="h-10" src="./public/hf-logo.svg" alt="logo" />
           </Link>
         </div>
         {screenWidth > 580 ? (

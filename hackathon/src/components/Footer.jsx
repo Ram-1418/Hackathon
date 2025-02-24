@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 function Footer() {
   return (
-    <footer className="bg-gray-800 text-white p-6 text-center rounded-sm">
+    <footer className="bg-teal-800 text-white p-6 text-center rounded-sm ">
   <div className="container mx-auto"> 
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
       <div className="flex flex-col items-center">
@@ -16,21 +16,21 @@ function Footer() {
         </ul>
       </div>
       <div className="flex flex-col items-center">
-        <h3 className="text-lg font-bold mb-2">Location(pune)</h3>
+        <h3 className="text-lg font-bold mb-2">Location(Pune)</h3>
         <ul className="text-white">
-         <p>center for mental,</p>
+         <p>Center for mental,</p>
          <p>102/201 Housing society</p>
-         <p>sant tukaram nagar,</p>
-         <p>pune 411 021,MH,india</p>
+         <p>Sant tukaram nagar,</p>
+         <p>Pune 411 021,MH,india</p>
         </ul>
       </div>
       <div className="flex flex-col items-center">
         <h3 className="font-bold text-lg mb-2">Important Links</h3>
         <ul className="text-white">
          <p>Appointment Booking Policy</p>
-         <p>privacy policy</p>
-         <p>term& condition</p>
-         <p>refund and cancellation</p>
+         <p>Privacy policy</p>
+         <p>Term& condition</p>
+         <p>Refund and cancellation</p>
          <Link to="/login/doctor">
           Doctors Login
          </Link>
@@ -40,7 +40,7 @@ function Footer() {
         <h3 className="font-bold text-lg mb-2">Recent Posts</h3>
         <ul className="text-white">
          <p>Post traumatic growth</p>
-         <p>understanding trauma</p>
+         <p>Understanding trauma</p>
        
         </ul>
       </div>

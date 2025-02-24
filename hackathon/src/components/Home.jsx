@@ -1,4 +1,6 @@
 import React from "react";
+import 'animate.css';
+
 import { useNavigate } from "react-router-dom";
 function Home() {
   const navigate = useNavigate();
@@ -16,14 +18,17 @@ function Home() {
         }}
       >
         <div className="container mx-auto text-center">
-          <h1 className="text-4xl font-bold mb-4">
-            Welcome to Your Mental Health Portal
-          </h1>
-          <p className="text-xl mb-8">Your Gateway to Mental Wellness</p>
+        <h1 className="text-4xl font-bold mb-4 animate__animated animate__zoomIn">
+  Welcome to Your Mental Health Portal
+</h1>
+
+
+
+          <p className="text-xl mb-8">Start improving your mental health and well-being today.  Health First shows you how.</p>
           <button
             className="bg-white text-blue-500 font-semibold py-2 px-6 rounded shadow hover:scale-95 duration-100 ease-in-out"
 
-            onClick={()=>{navigate('/login')}}
+            onClick={() => { navigate('/login') }}
 
           >
             Start Your Journey
@@ -63,7 +68,7 @@ function Home() {
               </p>
               <button
                 className="text-blue-500 font-semibold"
-     
+
 
               >
                 Learn More
@@ -157,14 +162,47 @@ function Home() {
         <div className="container mx-auto text-center">
           <h2 className="text-3xl font-bold mb-8">What Users Say</h2>
           <blockquote className="italic text-xl text-gray-700 mb-4">
-            "This portal has been a game-changer for my mental health."
+            "This platform has been a lifeline for my mental well-being. The support I received has truly made a difference in my life."
           </blockquote>
-          <cite className="text-blue-500 font-semibold">- Jane Doe</cite>
+          <cite className="text-blue-500 font-semibold">- Arun Jadhav</cite>
         </div>
       </section>
 
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* About Us Section */}
+        <div className="bg-gray-200 py-10 px-6 md:px-12 rounded-lg shadow-lg text-center">
+          <p className="text-black text-md md:text-2xl leading-relaxed font-serif">
+            <span className="font-semibold text-blue-600">About Us</span><br />
+            HelpGuide.org is an independent nonprofit that <br />
+            runs one of the world’s leading mental health <br />
+            websites. Each month, millions of people from <br />
+            all around the world turn to us for trustworthy <br />
+            information they can use to improve their mental health and make healthy changes.
+          </p>
+        </div>
+
+
+        {/* Video Section */}
+        <div className="bg-white py-6 px-6 md:px-12 rounded-lg shadow-lg text-center">
+          <h2 className="text-2xl font-semibold mb-4 text-gray-800">Watch Our Video</h2>
+          <div className="video-container">
+            <iframe
+              width="100%"
+              height="315"
+              src="https://www.youtube.com/embed/nzDljDaQ_v8"
+              title="YouTube video"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          </div>
+        </div>
+      </div>
+
+
+
       {/* Contact Section */}
-     
+
       <div className="container mx-auto py-8 w-full">
         <div className="flex justify-center items-center flex-wrap bg-[#0c96f8] text-white rounded-lg p-8 m-4">
           <img
@@ -185,7 +223,7 @@ function Home() {
               target="_blank"
               rel="noopener noreferrer"
             >
-             <img src="https://static.whatsapp.net/rsrc.php/yZ/r/JvsnINJ2CZv.svg" alt="" srcSet=""  />
+              <img src="https://static.whatsapp.net/rsrc.php/yZ/r/JvsnINJ2CZv.svg" alt="" srcSet="" />
               Free Mental Health Counselling
             </a>
           </div>
