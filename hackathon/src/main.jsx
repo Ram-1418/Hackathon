@@ -14,6 +14,7 @@ import Login from './components/Login.jsx'
 import Dashboard from './components/Dashboard/Dashboard.jsx'
 import QuizForm from './components/QuizForm.jsx'
 import AppointmentForm from './components/Apppointment.jsx'
+import Chatbot from './components/Chatbot.jsx'
 
 
 const router = createBrowserRouter(
@@ -32,6 +33,7 @@ const router = createBrowserRouter(
       <Route path='/quiz-form' element={<QuizForm />} />
       <Route path='/login/:doctor' element={<Login />} />
       <Route path='/login' element={<Login />} />
+      <Route path='/chatbot' element={<Chatbot />} />
     </Route>
   )
 )
