@@ -1,42 +1,54 @@
 import React, { useEffect, useState } from "react";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
+import model from "../chatbot";
 
 function Chatbot() {
   const [messages, setMessages] = useState([
-    { text: "Hello! How can I assist you today?", sender: "bot" }
+    {
+      role: "user",
+      parts: [{ text: "hi" }],
+    },
   ]);
-  
-  const [input, setInput] = useState("");
 
-  const handleSendMessage = () => {
+  const [input, setInput] = useState("");
+  const chat = model.startChat({ history: [...messages] });
+  const handleSendMessage = async () => {
     if (input.trim() !== "") {
       setMessages((prevMessages) => [
         ...prevMessages,
-        { text: input, sender: "user" },
-        { text: "how i help you today", sender: "bot" }
+        {
+          role: "user",
+          parts: [{ text: input }],
+        },
+      ]);
+      const result = await chat.sendMessage(input);
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          role: "model",
+          parts: [{ text: result.response.text() }],
+        },
       ]);
       setInput(""); // Clear input field after sending
     }
   };
-  const genAI = new GoogleGenerativeAI("AIzaSyALDRZHkyT0HSVOIVdbK5XxghDWMsBx5ac");
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  async function firstMessage() {
+    const result = await chat.sendMessage("Hi");
 
-
-  const FetchData=async()=>{
-    const prompt = "Tell me about virat kohile";
-
-    const result = await model.generateContent(prompt);
-    console.log(result.response.text());
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      {
+        role: "model",
+        parts: [{ text: result.response.text() }],
+      },
+    ]);
   }
   useEffect(() => {
-
-   FetchData()
+    firstMessage();
   }, []);
-  
+
   return (
     <>
-      <div className="flex flex-col h-[400px] w-[300px] bg-white shadow-xl rounded-lg fixed bottom-12 right-12 z-50 border border-gray-200  ">
+      <div className="flex flex-col h-[400px] w-[300px] bg-white shadow-xl rounded-lg fixed bottom-12 overflow-scroll right-12 z-50 border border-gray-200  ">
         <div className="w-full max-w-md h-[500px] bg-white rounded-lg shadow-lg flex flex-col">
           {/* Messages Section */}
           <div className="flex-grow p-4 overflow-y-auto">
@@ -44,9 +56,15 @@ function Chatbot() {
             {messages.map((message, index) => (
               <div
                 key={index}
-                className={`mb-4 p-3 rounded-lg ${message.sender === "user" ? "bg-green-100 text-right" : "bg-gray-200"}`}
+                className={`mb-4 p-3 rounded-lg ${
+                  message.role === "user"
+                    ? "bg-green-100 text-right"
+                    : "bg-gray-200"
+                }`}
               >
-                <span className="text-sm text-gray-700">{message.text}</span>
+                <span className="text-sm text-gray-700">
+                  {message.parts[0].text}
+                </span>
               </div>
             ))}
           </div>
