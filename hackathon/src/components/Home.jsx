@@ -1,10 +1,20 @@
-import React from "react";
-import 'animate.css';
+import React, { useState } from "react";
+import Chatbot from "./Chatbot";
+import { FaRegComments } from "react-icons/fa";
+
 
 import { useNavigate } from "react-router-dom";
+
+
 function Home() {
   const navigate = useNavigate();
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
 
+  const toggleChatbot = () => {
+    console.log(isChatbotOpen);
+
+    setIsChatbotOpen((prev) => !prev)
+  }
   return (
     <div className="bg-gray-100 text-gray-900">
       {/* Hero Section */}
@@ -18,9 +28,9 @@ function Home() {
         }}
       >
         <div className="container mx-auto text-center">
-        <h1 className="text-4xl font-bold mb-4 animate__animated animate__zoomIn">
-  Welcome to Your Mental Health Portal
-</h1>
+          <h1 className="text-4xl font-bold mb-4 animate__animated animate__zoomIn">
+            Welcome to Your Mental Health Portal
+          </h1>
 
 
 
@@ -157,6 +167,15 @@ function Home() {
         </div>
       </section>
 
+      {/* Chatbot Icon */}
+      <div onClick={toggleChatbot}
+
+        className="fixed  bottom-4 right-4 bg-green-500 text-white p-3 rounded-full shadow-lg cursor-pointer"
+
+      >
+        <FaRegComments size={30} />
+      </div>
+
       {/* Testimonials */}
       <section className="bg- py-16">
         <div className="container mx-auto text-center">
@@ -199,7 +218,9 @@ function Home() {
         </div>
       </div>
 
-
+      <div>{
+        isChatbotOpen && <Chatbot/>
+      }</div>
 
       {/* Contact Section */}
 
