@@ -7,7 +7,7 @@ function About() {
   const developers = [
     {
       name: "Sonu Shivcharan",
-      role: "Backed Developer",
+      role: "Backend Developer",
       image: "./shivcharan.jfif"
     },
     {
