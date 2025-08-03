@@ -32,7 +32,7 @@ function About() {
           <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl hover:bg-cyan-500 transition duration-200 border-solid border-2 border-sky-500">
             <img src="./about-icon2.png" alt="" />
             <p className="text-gray-700">
-            <FontAwesomeIcon icon={faUserDoctor} size="3x" color="green" /><br />
+              <FontAwesomeIcon icon={faUserDoctor} size="3x" color="green" /><br />
               Provide quality mental health services and support by carefully
               vetting and selecting a team of experts<br />
               <br />
@@ -45,8 +45,8 @@ function About() {
             <img src="./icon1.png" alt="" />
 
             <p className="text-gray-700">
-            <i className="flaticon-medical-doctor"></i> {/* Icon from Flaticon */}
-            <FontAwesomeIcon icon={faAmbulance} size="3x" color="green" /><br />
+              <i className="flaticon-medical-doctor"></i> {/* Icon from Flaticon */}
+              <FontAwesomeIcon icon={faAmbulance} size="3x" color="green" /><br />
 
               Respond and treat every individual with respect and dignity, while
               empowering them to have their own voice and encouraging them to
@@ -61,7 +61,7 @@ function About() {
           <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl hover:bg-cyan-500 transition duration-200 border-solid border-2 border-sky-500">
             <img src="./about-icon3.png" alt="" />
             <p className="text-gray-700">
-            <FontAwesomeIcon icon={faSyringe} size="3x" color="green" /><br />
+              <FontAwesomeIcon icon={faSyringe} size="3x" color="green" /><br />
               Continually learning, researching and creating more efficient
               methods to reach and serve the community optimally
               <br />
@@ -86,22 +86,27 @@ function About() {
           year.
         </p></div>
       <h1 className="text-3xl font-bold text-center mb-8 pt-8">Our Team</h1>
-      <div className=" container flex justify-center gap-8 py-9">
-        {
-          developers.map(({ name, image, role }, idx) => {
-            return (
-              <div key={name + idx} className="max-w-[250px] bg-white rounded-lg shadow-md p-2 hover:shadow-xl hover:bg-cyan-500 transition duration-200 border-solid border border-sky-500 text-gray-700">
-                <img className="rounded-full h-[210px] w-full" src={image} alt="" />
-                <p className="text-center p-2 font-bold text-2xl">
-                  {name}
-                </p>
-                <p className=" text-center p-2 font-bold text-lg">
-                  {role}
-                </p>
-              </div>)
-          })
-        }
+      <div className="container mx-auto py-9">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 place-items-center">
+          {
+            developers.map(({ name, image, role }, idx) => (
+              <div
+                key={name + idx}
+                className="max-w-[250px] bg-white rounded-lg shadow-md p-4 hover:shadow-xl hover:bg-cyan-500 transition duration-200 border border-sky-500 text-gray-700"
+              >
+                <img
+                  className="rounded-full h-[210px] w-[210px] mx-auto object-cover"
+                  src={image}
+                  alt={`Photo of ${name}`}
+                />
+                <p className="text-center p-2 font-bold text-2xl">{name}</p>
+                <p className="text-center p-2 font-bold text-lg">{role}</p>
+              </div>
+            ))
+          }
+        </div>
       </div>
+
     </div>
   );
 }
