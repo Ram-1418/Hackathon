@@ -7,17 +7,17 @@ function About() {
   const developers = [
     {
       name: "Sonu Shivcharan",
-      role: "Backend Developer",
+      // role: "Backend Developer",
       image: "./shivcharan.jfif"
     },
     {
       name: "Jayesh Pandhare",
-      role: "Frontend Developer",
+      // role: "Frontend Developer",
       image: "./jayesh.webp"
     },
     {
       name: "Rameshwar Patil",
-      role: "Frontend Developer",
+      // role: "Frontend Developer",
       image: "./ram.png"
     }
   ]
@@ -86,28 +86,28 @@ function About() {
           year.
         </p></div>
       <h1 className="text-3xl font-bold text-center mb-8 pt-8">Our Team</h1>
-      <div className="container mx-auto py-9">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 place-items-center">
-          {
-            developers.map(({ name, image, role }, idx) => (
-              <div
-                key={name + idx}
-                className="max-w-[250px] bg-white rounded-lg shadow-md p-4 hover:shadow-xl hover:bg-cyan-500 transition duration-200 border border-sky-500 text-gray-700"
-              >
-                <img
-                  className="rounded-full h-[210px] w-[210px] mx-auto object-cover"
-                  src={image}
-                  alt={`Photo of ${name}`}
-                />
-                <p className="text-center p-2 font-bold text-2xl">{name}</p>
-                <p className="text-center p-2 font-bold text-lg">{role}</p>
-              </div>
-            ))
-          }
-        </div>
+      <div className="container mx-auto py-9 px-4">
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 justify-items-center">
+    {developers.map(({ name, image, role }, idx) => (
+      <div
+        key={name + idx}
+        className="w-full max-w-[250px] bg-white rounded-lg shadow-md p-4 hover:shadow-xl hover:bg-cyan-500 transition duration-200 border border-sky-500 text-gray-700 flex flex-col items-center"
+      >
+        <img
+          className="rounded-full h-[210px] w-[210px] object-cover"
+          src={image}
+          alt={`Photo of ${name}`}
+        />
+        <p className="text-center mt-3 font-bold text-2xl">{name}</p>
+        <p className="text-center font-semibold text-lg">{role}</p>
       </div>
+    ))}
+  </div>
+</div>
 
-    </div>
+       
+        </div>
+
   );
 }
 
