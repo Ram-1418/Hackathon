@@ -1,7 +1,5 @@
-import React, { useState } from "react";
+
 import { useNavigate } from "react-router-dom";
-import Appointment from "./Apppointment";
-import AppointmentForm from "./Apppointment";
 function Services() {
   const navigate = useNavigate();
   const services = [
@@ -14,12 +12,6 @@ function Services() {
     { name: "Neuropsychological Assessment", img: "neuro.webp" },
     { name: "Supervision & Training", img: "training.jpg" },
   ];
-  const handleBookAppointment = () => {
-    // Handle the booking logic here
-    console.log("Appointment booked!");
-
-    navigate("/appointments")
-  };
   return (
     <div className="pt-[80px]">
       <h2 className="text-center text-2xl font-bold">Services</h2>
