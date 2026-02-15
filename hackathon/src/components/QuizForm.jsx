@@ -1,34 +1,63 @@
-import React, { useState } from "react";
-import { auth, db } from "../firebase"; // Import your Firebase setup
-import { doc, setDoc } from "firebase/firestore";
+import React, { useState, useEffect } from "react";
+import { auth, db } from "../firebase";
+import { collection, getDocs, addDoc } from "firebase/firestore";
 
 function QuizForm() {
   const [responses, setResponses] = useState({
     question1: "",
     question2: "",
-    // Add more questions as needed
   });
+
+  const [doctors, setDoctors] = useState([]);
+  const [selectedDoctor, setSelectedDoctor] = useState("");
+
+  // 🔥 Fetch doctors
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      const snapshot = await getDocs(collection(db, "doctors"));
+      const doctorList = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setDoctors(doctorList);
+    };
+
+    fetchDoctors();
+  }, []);
+
   const submitQuizResponses = async () => {
     try {
-      const user = auth.currentUser; // Get the currently logged-in user
-      if (user) {
-        const userId = user.uid; // Get the user's ID
-        const timestamp = new Date().toISOString(); // Get current timestamp
+      const user = auth.currentUser;
 
-        // Create a document in the 'quizResponses' collection
-        await setDoc(doc(db, "quizResponses", userId), {
-          userId,
-          timestamp,
-          responses,
-        });
-
-        // Optionally, display a success message or redirect the user
-        alert("Quiz responses submitted successfully!");
-        console.log("Quiz responses submitted successfully!");
-      } else {
-        // Handle the case where the user is not logged in
-        console.error("User is not logged in.");
+      if (!user) {
+        alert("Please login first");
+        return;
       }
+
+      if (!selectedDoctor) {
+        alert("Please select a doctor");
+        return;
+      }
+
+      await addDoc(
+        collection(db, "doctors", selectedDoctor, "patients"),
+        {
+          userId: user.uid,
+          userEmail: user.email,
+          responses: responses,
+          submittedAt: new Date(),
+        }
+      );
+
+      alert("Quiz responses submitted to doctor successfully!");
+
+      // Reset form
+      setResponses({
+        question1: "",
+        question2: "",
+      });
+      setSelectedDoctor("");
+
     } catch (error) {
       console.error("Error submitting quiz responses:", error);
     }
@@ -40,8 +69,7 @@ function QuizForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    submitQuizResponses(responses);
-    e.targetreset();
+    submitQuizResponses();
   };
 
   return (
@@ -49,40 +77,55 @@ function QuizForm() {
       onSubmit={handleSubmit}
       className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
     >
+      {/* Question 1 */}
       <div className="mb-4">
-        <label
-          className="block text-gray-700 text-sm font-bold mb-2"
-          htmlFor="question1"
-        >
+        <label className="block text-gray-700 text-sm font-bold mb-2">
           Question 1:
         </label>
         <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="question1"
           type="text"
           name="question1"
           value={responses.question1}
           onChange={handleChange}
+          className="border rounded w-full py-2 px-3"
         />
       </div>
+
+      {/* Question 2 */}
       <div className="mb-4">
-        <label
-          className="block text-gray-700 text-sm font-bold mb-2"
-          htmlFor="question2"
-        >
+        <label className="block text-gray-700 text-sm font-bold mb-2">
           Question 2:
         </label>
         <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="question2"
           type="text"
           name="question2"
           value={responses.question2}
           onChange={handleChange}
+          className="border rounded w-full py-2 px-3"
         />
       </div>
+
+      {/* Doctor Selection */}
+      <div className="mb-4">
+        <label className="block text-gray-700 text-sm font-bold mb-2">
+          Select Doctor:
+        </label>
+        <select
+          value={selectedDoctor}
+          onChange={(e) => setSelectedDoctor(e.target.value)}
+          className="border rounded w-full py-2 px-3"
+        >
+          <option value="">Select Doctor</option>
+          {doctors.map((doctor) => (
+            <option key={doctor.id} value={doctor.id}>
+              {doctor.displayName}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         type="submit"
       >
         Submit
@@ -90,4 +133,5 @@ function QuizForm() {
     </form>
   );
 }
+
 export default QuizForm;
