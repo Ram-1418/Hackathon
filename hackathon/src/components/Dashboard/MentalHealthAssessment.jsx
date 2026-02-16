@@ -1,25 +1,9 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
+import { auth, db } from "../../firebase";
+import { collection, getDocs, addDoc } from "firebase/firestore";
 
-import { database, auth } from "../../firebase"; // Ensure your firebase.js exports 'db'
-import {ref, set } from "firebase/database";
+function MentalHealthAssessmentForm({ disableFields }) {
 
-const submitReportToRTDB = async (userId, reportData) => {
-    try {
-      // Generate a reference for the report (e.g., using userId)
-      const reportRef = ref(database, `reports/${userId}/${Date.now()}`);
-  
-      // Push data to the reference in the RTDB
-      await set(reportRef, {
-        ...reportData,
-        submittedAt: new Date().toISOString() // Add a timestamp
-      });
-      console.log("Report submitted successfully to RTDB!");
-    } catch (error) {
-      console.error("Error submitting report to RTDB:", error);
-    }
-  };
-
-function MentalHealthAssessmentForm({reportData, disableFields}) {
   const [formData, setFormData] = useState({
     mood: "",
     sleepQuality: "",
@@ -29,57 +13,84 @@ function MentalHealthAssessmentForm({reportData, disableFields}) {
     appetite: "",
     suicidalThoughts: "",
     additionalNotes: "",
-    type:"mental-health",
-    apppointment:false
+    appointment: false,
   });
 
-useEffect(()=>{
-  if (reportData) {
-    setFormData(reportData);
-  }else{
-    setFormData({
-      mood: "",
-      sleepQuality: "",
-      stressLevel: "",
-      anxietyLevel: "",
-      energyLevel: "",
-      appetite: "",
-      suicidalThoughts: "",
-      additionalNotes: "",
-      type:"mental-health",
-      appointment:false
-    })
-  }
-},[reportData]);
+  const [doctors, setDoctors] = useState([]);
+  const [selectedDoctor, setSelectedDoctor] = useState("");
+
+  // 🔥 Fetch doctors from Firestore
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const snapshot = await getDocs(collection(db, "doctors"));
+        const doctorList = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setDoctors(doctorList);
+      } catch (error) {
+        console.error("Error fetching doctors:", error);
+      }
+    };
+
+    fetchDoctors();
+  }, []);
+
   const handleChange = (e) => {
-    if(e.target.type=="checkbox"){
-      console.log(e.target.checked)
+    if (e.target.type === "checkbox") {
       setFormData({ ...formData, [e.target.name]: e.target.checked });
-      return;
+    } else {
+      setFormData({ ...formData, [e.target.name]: e.target.value });
     }
-    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     const user = auth.currentUser;
-    const userId = user.uid;
-    console.log(userId);
-    // Submit form logic here (e.g., save to Firestore)
-    submitReportToRTDB(userId, formData);
-    console.log("Assessment Submitted:", formData);
-    // Reset the form
-    setFormData({
-      mood: "",
-      sleepQuality: "",
-      stressLevel: "",
-      anxietyLevel: "",
-      energyLevel: "",
-      appetite: "",
-      suicidalThoughts: "",
-      additionalNotes: "",
-    });
-    alert("Your assessment has been submitted successfully.");
+
+    if (!user) {
+      alert("Please login first");
+      return;
+    }
+
+    if (formData.appointment && !selectedDoctor) {
+      alert("Please select a doctor");
+      return;
+    }
+
+    try {
+      await addDoc(
+        collection(db, "doctors", selectedDoctor, "patients"),
+        {
+          userId: user.uid,
+          userEmail: user.email,
+          ...formData,
+          submittedAt: new Date(),
+        }
+      );
+
+      alert("Assessment submitted successfully!");
+
+      // Reset form
+      setFormData({
+        mood: "",
+        sleepQuality: "",
+        stressLevel: "",
+        anxietyLevel: "",
+        energyLevel: "",
+        appetite: "",
+        suicidalThoughts: "",
+        additionalNotes: "",
+        appointment: false,
+      });
+
+      setSelectedDoctor("");
+
+    } catch (error) {
+      console.error("Error submitting:", error);
+    }
   };
 
   return (
@@ -89,196 +100,174 @@ useEffect(()=>{
       </h2>
 
       <form onSubmit={handleSubmit}>
+
         {/* Mood */}
-        <div className="mb-4">
-          <label className="block text-gray-700 font-semibold mb-2">
-            How would you describe your overall mood today?
-          </label>
-          <select
-            name="mood"
-            value={formData.mood}
-            onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring focus:ring-blue-200"
-            required
-            disabled={disableFields}
-          >
-            <option value="">Select Mood</option>
-            <option value="Very Happy">Very Happy</option>
-            <option value="Happy">Happy</option>
-            <option value="Neutral">Neutral</option>
-            <option value="Sad">Sad</option>
-            <option value="Very Sad">Very Sad</option>
-          </select>
-        </div>
+        <select
+          name="mood"
+          value={formData.mood}
+          onChange={handleChange}
+          required
+          disabled={disableFields}
+          className="w-full p-3 border rounded-lg mb-4"
+        >
+          <option value="">Select Mood</option>
+          <option value="Very Happy">Very Happy</option>
+          <option value="Happy">Happy</option>
+          <option value="Neutral">Neutral</option>
+          <option value="Sad">Sad</option>
+          <option value="Very Sad">Very Sad</option>
+        </select>
 
-        {/* Sleep Quality */}
-        <div className="mb-4">
-          <label className="block text-gray-700 font-semibold mb-2">
-            How would you rate your sleep quality last night?
-          </label>
-          <select
-            name="sleepQuality"
-            value={formData.sleepQuality}
-            onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring focus:ring-blue-200"
-            required
-            disabled={disableFields}
-          >
-            <option value="">Select Sleep Quality</option>
-            <option value="Excellent">Excellent</option>
-            <option value="Good">Good</option>
-            <option value="Fair">Fair</option>
-            <option value="Poor">Poor</option>
-            <option value="Very Poor">Very Poor</option>
-          </select>
-        </div>
+        {/* Sleep */}
+        <select
+          name="sleepQuality"
+          value={formData.sleepQuality}
+          onChange={handleChange}
+          required
+          disabled={disableFields}
+          className="w-full p-3 border rounded-lg mb-4"
+        >
+          <option value="">Select Sleep Quality</option>
+          <option value="Excellent">Excellent</option>
+          <option value="Good">Good</option>
+          <option value="Fair">Fair</option>
+          <option value="Poor">Poor</option>
+          <option value="Very Poor">Very Poor</option>
+        </select>
 
-        {/* Stress Level */}
-        <div className="mb-4">
-          <label className="block text-gray-700 font-semibold mb-2">
-            How stressed do you feel today?
-          </label>
-          <select
-            name="stressLevel"
-            value={formData.stressLevel}
-            onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring focus:ring-blue-200"
-            required
-            disabled={disableFields}
-          >
-            <option value="">Select Stress Level</option>
-            <option value="Not Stressed">Not Stressed</option>
-            <option value="Slightly Stressed">Slightly Stressed</option>
-            <option value="Moderately Stressed">Moderately Stressed</option>
-            <option value="Very Stressed">Very Stressed</option>
-            <option value="Extremely Stressed">Extremely Stressed</option>
-          </select>
-        </div>
+        {/* Stress */}
+        <select
+          name="stressLevel"
+          value={formData.stressLevel}
+          onChange={handleChange}
+          required
+          disabled={disableFields}
+          className="w-full p-3 border rounded-lg mb-4"
+        >
+          <option value="">Select Stress Level</option>
+          <option value="Not Stressed">Not Stressed</option>
+          <option value="Slightly Stressed">Slightly Stressed</option>
+          <option value="Moderately Stressed">Moderately Stressed</option>
+          <option value="Very Stressed">Very Stressed</option>
+          <option value="Extremely Stressed">Extremely Stressed</option>
+        </select>
 
-        {/* Anxiety Level */}
-        <div className="mb-4">
-          <label className="block text-gray-700 font-semibold mb-2">
-            How anxious do you feel today?
-          </label>
-          <select
-            name="anxietyLevel"
-            value={formData.anxietyLevel}
-            onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring focus:ring-blue-200"
-            required
-            disabled={disableFields}
-          >
-            <option value="">Select Anxiety Level</option>
-            <option value="Not Anxious">Not Anxious</option>
-            <option value="Slightly Anxious">Slightly Anxious</option>
-            <option value="Moderately Anxious">Moderately Anxious</option>
-            <option value="Very Anxious">Very Anxious</option>
-            <option value="Extremely Anxious">Extremely Anxious</option>
-          </select>
-        </div>
+        {/* Anxiety */}
+        <select
+          name="anxietyLevel"
+          value={formData.anxietyLevel}
+          onChange={handleChange}
+          required
+          disabled={disableFields}
+          className="w-full p-3 border rounded-lg mb-4"
+        >
+          <option value="">Select Anxiety Level</option>
+          <option value="Not Anxious">Not Anxious</option>
+          <option value="Slightly Anxious">Slightly Anxious</option>
+          <option value="Moderately Anxious">Moderately Anxious</option>
+          <option value="Very Anxious">Very Anxious</option>
+          <option value="Extremely Anxious">Extremely Anxious</option>
+        </select>
 
-        {/* Energy Level */}
-        <div className="mb-4">
-          <label className="block text-gray-700 font-semibold mb-2">
-            How is your energy level today?
-          </label>
-          <select
-            name="energyLevel"
-            value={formData.energyLevel}
-            onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring focus:ring-blue-200"
-            required
-            disabled={disableFields}
-          >
-            <option value="">Select Energy Level</option>
-            <option value="Very Energetic">Very Energetic</option>
-            <option value="Energetic">Energetic</option>
-            <option value="Neutral">Neutral</option>
-            <option value="Tired">Tired</option>
-            <option value="Exhausted">Exhausted</option>
-          </select>
-        </div>
+        {/* Energy */}
+        <select
+          name="energyLevel"
+          value={formData.energyLevel}
+          onChange={handleChange}
+          required
+          disabled={disableFields}
+          className="w-full p-3 border rounded-lg mb-4"
+        >
+          <option value="">Select Energy Level</option>
+          <option value="Very Energetic">Very Energetic</option>
+          <option value="Energetic">Energetic</option>
+          <option value="Neutral">Neutral</option>
+          <option value="Tired">Tired</option>
+          <option value="Exhausted">Exhausted</option>
+        </select>
 
         {/* Appetite */}
-        <div className="mb-4">
-          <label className="block text-gray-700 font-semibold mb-2">
-            How is your appetite today?
-          </label>
-          <select
-            name="appetite"
-            value={formData.appetite}
-            onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring focus:ring-blue-200"
-            required
-            disabled={disableFields}
-          >
-            <option value="">Select Appetite Level</option>
-            <option value="Very Good">Very Good</option>
-            <option value="Good">Good</option>
-            <option value="Normal">Normal</option>
-            <option value="Poor">Poor</option>
-            <option value="Very Poor">Very Poor</option>
-          </select>
-        </div>
+        <select
+          name="appetite"
+          value={formData.appetite}
+          onChange={handleChange}
+          required
+          disabled={disableFields}
+          className="w-full p-3 border rounded-lg mb-4"
+        >
+          <option value="">Select Appetite Level</option>
+          <option value="Very Good">Very Good</option>
+          <option value="Good">Good</option>
+          <option value="Normal">Normal</option>
+          <option value="Poor">Poor</option>
+          <option value="Very Poor">Very Poor</option>
+        </select>
 
         {/* Suicidal Thoughts */}
-        <div className="mb-4">
-          <label className="block text-gray-700 font-semibold mb-2">
-            Have you had any thoughts of self-harm or suicide recently?
-          </label>
-          <select
-            name="suicidalThoughts"
-            value={formData.suicidalThoughts}
-            onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:border-red-500 focus:ring focus:ring-red-200"
-            required
-            disabled={disableFields}
-          >
-            <option value="">Select an Option</option>
-            <option value="No">No</option>
-            <option value="Yes, Occasionally">Yes, Occasionally</option>
-            <option value="Yes, Frequently">Yes, Frequently</option>
-          </select>
-        </div>
+        <select
+          name="suicidalThoughts"
+          value={formData.suicidalThoughts}
+          onChange={handleChange}
+          required
+          disabled={disableFields}
+          className="w-full p-3 border rounded-lg mb-4"
+        >
+          <option value="">Have you had thoughts of self-harm?</option>
+          <option value="No">No</option>
+          <option value="Yes, Occasionally">Yes, Occasionally</option>
+          <option value="Yes, Frequently">Yes, Frequently</option>
+        </select>
 
         {/* Additional Notes */}
-        <div className="mb-6">
-          <label className="block text-gray-700 font-semibold mb-2">
-            Is there anything else you'd like to share?
-          </label>
-          <textarea
-            name="additionalNotes"
-            value={formData.additionalNotes}
-            onChange={handleChange}
-            placeholder="Feel free to share any additional thoughts or feelings."
-            className="w-full p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring focus:ring-blue-200"
-            rows="4"
-            disabled={disableFields}
-          />
+        <textarea
+          name="additionalNotes"
+          value={formData.additionalNotes}
+          onChange={handleChange}
+          disabled={disableFields}
+          placeholder="Is there anything else you'd like to share?"
+          className="w-full p-3 border rounded-lg mb-4"
+          rows="4"
+        />
 
-        </div>
-        <div className="mb-6">
-         
+        {/* Appointment Checkbox */}
+        <div className="mb-4">
           <input
             type="checkbox"
             name="appointment"
-            value={formData.appointment}
             checked={formData.appointment}
             onChange={handleChange}
-            className="p-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring focus:ring-blue-200"
-            /> <label className="mx-1 text-gray-700 font-semibold mb-2">
+            disabled={disableFields}
+          />
+          <label className="ml-2 font-semibold">
             Do you want to book an appointment?
           </label>
         </div>
-        {/* Submit Button */}
-        <div className="text-center">
-          {!disableFields && <button
+
+        {/* Doctor Dropdown */}
+        {formData.appointment && (
+          <select
+            value={selectedDoctor}
+            onChange={(e) => setSelectedDoctor(e.target.value)}
+            required
+            className="w-full p-3 border rounded-lg mb-4"
+          >
+            <option value="">Select Doctor</option>
+            {doctors.map((doctor) => (
+              <option key={doctor.id} value={doctor.id}>
+                {doctor.displayName}
+              </option>
+            ))}
+          </select>
+        )}
+
+        {!disableFields && (
+          <button
             type="submit"
-            className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 focus:outline-none"
+            className="w-full bg-blue-500 text-white py-3 rounded-lg"
           >
             Submit Assessment
-          </button>}
-        </div>
+          </button>
+        )}
       </form>
     </div>
   );

@@ -21,6 +21,9 @@ import QuizForm from "./components/QuizForm.jsx";
 import AppointmentForm from "./components/Apppointment.jsx";
 import Chatbot from "./components/Chatbot.jsx";
 
+import DoctorLogin from "./components/DoctorLogin.jsx";
+import DoctorRegister from "./components/DoctorRegister.jsx";
+
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
@@ -43,6 +46,11 @@ const router = createBrowserRouter(
       <Route path="/login/:doctor" element={<Login />} />
       <Route path="/login" element={<Login />} />
       <Route path="/chatbot" element={<Chatbot />} />
+
+      <Route path="/register/doctor" element={<DoctorRegister />} />
+<Route path="/login/doctor" element={<DoctorLogin />} />
+
+
     </Route>
   )
 );

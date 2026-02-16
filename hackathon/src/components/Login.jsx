@@ -1,178 +1,102 @@
-import React, { useContext, useState } from "react";
+import  { useState } from "react";
 import {
   auth,
   provider,
   signInWithPopup,
   signInWithEmailAndPassword,
 } from "../firebase";
-import { doc, setDoc } from "firebase/firestore"; // Import Firestore functions
-import { db } from "../firebase"; // Assuming you have a db instance for Firestore
-import { useNavigate, useParams } from "react-router-dom";
-import Loader from "./Loader"
-import { NavigateContext } from "../contexts/navigate";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
+import { useNavigate } from "react-router-dom";
+import Loader from "./Loader";
+
 function Login() {
-  const {navigate} = useContext(NavigateContext);
+  const navigate = useNavigate();
+
   const [isLoggingin, setLogging] = useState(false);
-  const { doctor } = useParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // State for form errors
-  const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const handleLogin = async (email, password) => {
-    setLogging(true)
+  // 🔥 Email & Password Login
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLogging(true);
+
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
         password
       );
+
       const user = userCredential.user;
-      await setDoc(doc(db, "users", user.uid), {
-        uid: user.uid,
-        displayName: user.displayName,
-        email: user.email,
-        photoURL: user?.photoURL,
-        role: "user",
-        // Add any other relevant user data you want to store
-      });
-      // User is signed in
-      console.log("User signed in:", user);
-      navigate("/dashboard/doctor");
+
+      // Check if doctor
+      const doctorDoc = await getDoc(doc(db, "doctors", user.uid));
+
+      if (doctorDoc.exists()) {
+        navigate("/dashboard/doctor");
+      } else {
+        // Save normal user if not exists
+        await setDoc(
+          doc(db, "users", user.uid),
+          {
+            uid: user.uid,
+            email: user.email,
+            role: "user",
+            createdAt: new Date(),
+          },
+          { merge: true }
+        );
+
+        navigate("/dashboard/user");
+      }
+
       setLogging(false);
+
+    // eslint-disable-next-line no-unused-vars
     } catch (error) {
       setLogging(false);
-      console.error("Error signing in:", error);
-      alert("inavild credentials");
+      alert("Invalid credentials");
     }
   };
-  // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    // Validate form fields
-    const validationErrors = validateForm({ email, password });
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
 
-    // Submit form data (you can replace this with a call to your backend)
-    handleLogin(email, password);
-    // Reset form
-    setEmail("");
-    setPassword("");
-    setErrors({});
-    setIsSubmitting(false);
-  };
-  const validateForm = (values) => {
-    const errors = {};
-
-    if (!values.email) {
-      errors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(values.email)) {
-      errors.email = "Email address is invalid";
-    }
-
-    if (!values.password) {
-      errors.password = "Password is required";
-    } else if (values.password.length < 6) {
-      errors.password = "Password must be at least 6 characters";
-    }
-
-    return errors;
-  };
-  const isDoctor = doctor === "doctor";
-
+  // 🔥 Google Login
   const handleGoogleLogin = async () => {
-    setLogging(true)
+    setLogging(true);
+
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      // Store user data in Firestore
-      await setDoc(doc(db, "users", user.uid), {
-        uid: user.uid,
-        displayName: user.displayName,
-        email: user.email,
-        photoURL: user.photoURL,
-        role: "user",
-        // Add any other relevant user data you want to store
-      });
+      const doctorDoc = await getDoc(doc(db, "doctors", user.uid));
 
-      console.log("User signed in and data stored:", user);
-      setLogging(false)
-      navigate("/dashboard/user");
+      if (doctorDoc.exists()) {
+        navigate("/dashboard/doctor");
+      } else {
+        await setDoc(
+          doc(db, "users", user.uid),
+          {
+            uid: user.uid,
+            displayName: user.displayName,
+            email: user.email,
+            photoURL: user.photoURL,
+            role: "user",
+            createdAt: new Date(),
+          },
+          { merge: true }
+        );
+
+        navigate("/dashboard/user");
+      }
+
+      setLogging(false);
+
     } catch (error) {
-      setLogging(false)
-      console.error("Error signing in:", error);
+      setLogging(false);
+      console.error(error);
     }
   };
-  const loginUser = (
-    <>
-    
-      <div className="flex flex-col min-h-[150px] justify-ceneter items-center mt-4 p-4 max-w-[500px] w-full">
-      <h2 className="text-2xl font-bold mb-8">Login</h2>
-        <button
-          onClick={handleGoogleLogin}
-          className="flex items-center justify-center gap-2 bg-white text-gray-700 py-2 px-4 rounded-xl shadow hover:bg-gray-100"
-        >
-          <img
-            src="https://lh3.googleusercontent.com/COxitqgJr1sJnIDe8-jiKhxDx1FrYbtRHKJ9z_hELisAlapwE9LUPh6fcXIfb5vwpbMl4xl9H9TRFPc5NOO8Sb3VSgIBrfRYvW6cUA"
-            alt="Google Logo"
-            className="w-5 h-5"
-          />
-          Login with Google
-        </button>
-      </div>
-      </>
-  );
-  const loginDoctor = (
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Email
-          </label>
-          <input
-            type="email"
-            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ${
-              errors.email ? "border-red-500" : ""
-            }`}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
-          />
-          {errors.email && (
-            <p className="text-red-500 text-xs mt-2">{errors.email}</p>
-          )}
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Password
-          </label>
-          <input
-            type="password"
-            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ${
-              errors.password ? "border-red-500" : ""
-            }`}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter your password"
-          />
-          {errors.password && (
-            <p className="text-red-500 text-xs mt-2">{errors.password}</p>
-          )}
-        </div>
-        <button
-          type="submit"
-          className="bg-blue-500 text-white font-bold py-2 px-4 rounded w-full"
-          disabled={isLoggingin}
-        >
-          {isLoggingin ? "Logging in.." : "Login"}
-        </button>
-      </form>
-  );
 
   return (
     <div
@@ -183,11 +107,58 @@ function Login() {
       }}
     >
       {isLoggingin && <Loader>Logging In..</Loader>}
+
       <div className="bg-white p-9 max-w-[500px] w-full rounded-xl shadow-md ">
-      <h1 className="text-4xl text-center font-bold text-blue-950 mb-10">
-        HealthFirst
-      </h1>
-      {isDoctor?loginDoctor:loginUser}
+        <h1 className="text-4xl text-center font-bold text-blue-950 mb-10">
+          HealthFirst
+        </h1>
+
+        {/* Email Login */}
+        <form onSubmit={handleLogin}>
+          <input
+            type="email"
+            placeholder="Email"
+            className="w-full p-2 border mb-4 rounded"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+
+          <input
+            type="password"
+            placeholder="Password"
+            className="w-full p-2 border mb-4 rounded"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white py-2 rounded"
+            disabled={isLoggingin}
+          >
+            {isLoggingin ? "Logging in..." : "Login"}
+          </button>
+        </form>
+
+        {/* Divider */}
+        <div className="my-6 text-center text-gray-500">
+          OR
+        </div>
+
+        {/* Google Login */}
+        <button
+          onClick={handleGoogleLogin}
+          className="w-full flex items-center justify-center gap-2 bg-white text-gray-700 py-2 px-4 rounded-xl shadow hover:bg-gray-100"
+        >
+          <img
+            src="https://lh3.googleusercontent.com/COxitqgJr1sJnIDe8-jiKhxDx1FrYbtRHKJ9z_hELisAlapwE9LUPh6fcXIfb5vwpbMl4xl9H9TRFPc5NOO8Sb3VSgIBrfRYvW6cUA"
+            alt="Google Logo"
+            className="w-5 h-5"
+          />
+          Login with Google
+        </button>
       </div>
     </div>
   );
