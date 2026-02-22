@@ -68,6 +68,7 @@ function MentalHealthAssessmentForm({ disableFields }) {
           userEmail: user.email,
           ...formData,
           submittedAt: new Date(),
+          status: formData.appointment ? "pending" : "none", 
         }
       );
 
