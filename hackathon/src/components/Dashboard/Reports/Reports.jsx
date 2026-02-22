@@ -1,101 +1,111 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faClose } from "@fortawesome/free-solid-svg-icons";
-import Profile from "../Profile";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "../../../firebase";
 
-function Reports({ selectedReport, setReportVisible, userInfo }) {
-  console.log("infdo", userInfo);
-  const timestamps = Object.keys(selectedReport);
-  console.log(selectedReport);
+function Reports({ selectedReport, setReportVisible, doctorId }) {
+
+  const handleStatusUpdate = async (newStatus) => {
+    try {
+      await updateDoc(
+        doc(db, "doctors", doctorId, "patients", selectedReport.id),
+        {
+          status: newStatus,
+        }
+      );
+
+      alert(`Appointment ${newStatus}`);
+      setReportVisible(false);
+    } catch (error) {
+      console.error("Error updating status:", error);
+    }
+  };
+
+  // ✅ Safe Date Formatter
+  const formatDate = (timestamp) => {
+    if (!timestamp) return "N/A";
+
+    if (timestamp.seconds) {
+      return new Date(timestamp.seconds * 1000).toLocaleString();
+    }
+
+    return new Date(timestamp).toLocaleString();
+  };
+
   return (
-    <div className="h-screen w-screen fixed top-0 left-0 bg-slate-900/80 z-10 flex flex-col justify-center items-center">
-      <div className="max-w-[100vw] w-full h-full bg-gray-100 p-4 rounded-lg shadow-lg overflow-x-auto">
-        <div className="flex justify-around items-center fixed top-0 left-0 w-full mx-auto bg-white shadow-md p-2">
+    <div className="h-screen w-screen fixed top-0 left-0 bg-slate-900/80 z-10 flex justify-center items-center">
+      <div className="w-full max-w-3xl bg-white p-6 rounded-lg shadow-lg">
+
+        <div className="flex justify-between items-center mb-6">
           <FontAwesomeIcon
-            onClick={() => {
-              setReportVisible(false);
-            }}
+            onClick={() => setReportVisible(false)}
             icon={faArrowLeft}
-            className="font-bold text-xl"
+            className="cursor-pointer text-xl"
           />
-          <h2 className="text-2xl font-bold mb-4 text-center">
-            Report Details
-          </h2>
+          <h2 className="text-2xl font-bold">Report Details</h2>
           <FontAwesomeIcon
-            onClick={() => {
-              setReportVisible(false);
-            }}
+            onClick={() => setReportVisible(false)}
             icon={faClose}
-            className="font-bold text-xl"
+            className="cursor-pointer text-xl"
           />
         </div>
-        <div className="w-full pt-[100px]">
-        <Profile className="p-3" userData={userInfo}/>
+
+        <div className="space-y-3">
+
+          <div><strong>Email:</strong> {selectedReport.userEmail}</div>
+
+          <div><strong>Submitted On:</strong> {formatDate(selectedReport.submittedAt)}</div>
+
+          <div><strong>Mood:</strong> {selectedReport.mood}</div>
+          <div><strong>Sleep Quality:</strong> {selectedReport.sleepQuality}</div>
+          <div><strong>Stress Level:</strong> {selectedReport.stressLevel}</div>
+          <div><strong>Anxiety Level:</strong> {selectedReport.anxietyLevel}</div>
+          <div><strong>Energy Level:</strong> {selectedReport.energyLevel}</div>
+          <div><strong>Appetite:</strong> {selectedReport.appetite}</div>
+
+          {selectedReport.additionalNotes && (
+            <div>
+              <strong>Additional Notes:</strong> {selectedReport.additionalNotes}
+            </div>
+          )}
+
+          <div>
+            <strong>Status:</strong>{" "}
+            <span
+              className={
+                selectedReport.status === "accepted"
+                  ? "text-green-600 font-bold"
+                  : selectedReport.status === "rejected"
+                  ? "text-red-600 font-bold"
+                  : "text-yellow-600 font-bold"
+              }
+            >
+              {selectedReport.status}
+            </span>
           </div>
-          {timestamps
-            .sort((a, b) => Number(b) - Number(a))
-            .map((ts, idx) => {
-              const timestamp = Number(ts);
-              const date = new Date(timestamp);
-              const isToday = (timestamp) => {
-                const today = new Date();
-                return today.toDateString() == date.toDateString();
-              };
-              return (
-                <div className="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md mt-8 space-y-4" key={idx+ts}>
-                  <div className="text-xl font-bold text-gray-900 mb-4 text-center">
-                    Report - {idx + 1}
-                  </div>
-                  <div className="text-gray-700">
-                    <span className="font-medium text-blue-600">Appointment:</span>{" "}
-                    {selectedReport[ts].appointment?"Yes":"No"}
-                  </div>
-                  <div className="text-gray-700">
-                    
-                    {isToday(ts) ? "Today" :  <span className="font-medium text-blue-600">Date:{date.toDateString()}</span>}
-                    <span className="px-4"></span>
-                    <span className="font-medium text-blue-600">
-                      Time:
-                    </span>{" "}
-                    {date.toLocaleTimeString()}
-                  </div>
-                  <div className="text-gray-700">
-                    <span className="font-medium text-blue-600">Mood:</span>{" "}
-                    {selectedReport[ts].mood}
-                  </div>
-                  <div className="text-gray-700">
-                    <span className="font-medium text-blue-600">
-                      Sleep Quality:
-                    </span>{" "}
-                    {selectedReport[ts].sleepQuality}
-                  </div>
-                  <div className="text-gray-700">
-                    <span className="font-medium text-blue-600">
-                      Stress Level:
-                    </span>{" "}
-                    {selectedReport[ts].stressLevel}
-                  </div>
-                  <div className="text-gray-700">
-                    <span className="font-medium text-blue-600">
-                      Anxiety Level:
-                    </span>{" "}
-                    {selectedReport[ts].anxietyLevel}
-                  </div>
-                  <div className="text-gray-700">
-                    <span className="font-medium text-blue-600">
-                      Energy Level:
-                    </span>{" "}
-                    {selectedReport[ts].energyLevel}
-                  </div>
-                  <div className="text-gray-700">
-                    <span className="font-medium text-blue-600">Appetite:</span>{" "}
-                    {selectedReport[ts].appetite}
-                  </div>
-                </div>
-              );
-            })}
+
+          {selectedReport.appointment &&
+            selectedReport.status === "pending" && (
+              <div className="flex gap-4 mt-6">
+                <button
+                  onClick={() => handleStatusUpdate("accepted")}
+                  className="px-6 py-2 bg-green-500 text-white rounded-lg"
+                >
+                  Accept
+                </button>
+
+                <button
+                  onClick={() => handleStatusUpdate("rejected")}
+                  className="px-6 py-2 bg-red-500 text-white rounded-lg"
+                >
+                  Reject
+                </button>
+              </div>
+            )}
         </div>
       </div>
+    </div>
   );
 }
 

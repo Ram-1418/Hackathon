@@ -25,7 +25,7 @@ function Dashboard() {
       const docSnap = await getDoc(docRef);
       
       if (docSnap.exists()) {
-        return docSnap.data(); // Return the user data
+       return { uid: user.uid, ...docSnap.data() };// Return the user data
       } else {
         console.log("No user document found!");
         navigate("/login");
@@ -39,7 +39,7 @@ function Dashboard() {
       const docRef = doc(db, "doctors", user.uid); // Use "doctors" collection
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        return docSnap.data(); // Return the doctor's data
+        return { uid: user.uid, ...docSnap.data() };// Return the doctor's data
       } else {
         console.log("No doctor document found!");
         navigate("/login/doctor");

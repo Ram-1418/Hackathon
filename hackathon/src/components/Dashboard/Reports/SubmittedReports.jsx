@@ -1,185 +1,115 @@
 import React, { useEffect, useState } from "react";
-import { database, db } from "../../../firebase";
-import { ref, onValue } from "firebase/database";
-import { doc, getDoc } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../../../firebase";
 import Loader from "../../Loader";
-import MentalHealthAssessmentForm from "../MentalHealthAssessment";
-import Reports from "./Reports.jsx";
-const getUserDataByUid = async (uid) => {
-  try {
-    // Reference to the document using the uid
-    const docRef = doc(db, "users", uid); // Assuming 'users' is your collection name
-    const docSnap = await getDoc(docRef);
+import Reports from "./Reports";
 
-    if (docSnap.exists()) {
-      // Document data found
-      //console.log("User Data:", docSnap.data());
-      return docSnap.data();
-    } else {
-      // doc.data() will be undefined in this case
-      console.log("No such document!");
-    }
-  } catch (error) {
-    console.error("Error getting user document:", error);
-  }
-};
+function SubmittedReports({ isDoctor, currentUserId }) {
+  const [loading, setLoading] = useState(false);
+  const [reports, setReports] = useState([]);
+  const [selectedReport, setSelectedReport] = useState(null);
 
-function SubmittedReports({ isDoctor, currentUserId, setCurrentComponent }) {
-  const [isDataLoading, setLoading] = useState(false);
-  const [userIds, setUserIds] = useState([]);
-  const [submittedReports, setSubmittedReports] = useState([]);
-  const [userInfo, setUserInfo] = useState([]);
-  const [timestamps, setTimestamps] = useState([]);
-  const [isReportVisible, setReportVisible] = useState(false);
-  const [selectedReport, setSelectedReport] = useState([]);
-  const [selectedReportInfo, setSelectedReportInfo] = useState({});
-  //
   useEffect(() => {
-    const user = isDoctor ? "" : currentUserId;
-    console.log("current user", currentUserId);
-    setLoading(true);
-    const query = `reports/${user}`;
-    console.log(query, user);
-    const getSubmittedReportsRef = ref(database, query);
-    onValue(getSubmittedReportsRef, (snapshot) => {
-      const data = snapshot.val();
-      console.log(data);
-      setSubmittedReports(data);
-      // console.log("submitted reports",data);
-      setLoading(false);
-      const keys = Object.keys(data ?? {});
-      isDoctor && setUserIds(keys);
-      !isDoctor && setTimestamps(keys);
-      console.log(keys);
-    });
-  }, []);
-  // console.log("submitted reports", submittedReports);
-  useEffect(() => {
-    if (!isDoctor || userIds.length === 0) {
-      return;
-    }
-    const fetchData = async () => {
-      setLoading(true);
+    if (!currentUserId) return;
+
+    const fetchReports = async () => {
       try {
-        const promises = userIds.map((userId) => getUserDataByUid(userId));
-        const data = await Promise.all(promises);
-        setUserInfo(data);
+        setLoading(true);
+
+        if (isDoctor) {
+          const snapshot = await getDocs(
+            collection(db, "doctors", currentUserId, "patients")
+          );
+
+          const data = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+
+          setReports(data);
+        } else {
+          const doctorsSnap = await getDocs(collection(db, "doctors"));
+          let patientReports = [];
+
+          for (const doctorDoc of doctorsSnap.docs) {
+            const patientsSnap = await getDocs(
+              collection(db, "doctors", doctorDoc.id, "patients")
+            );
+
+            patientsSnap.forEach((doc) => {
+              if (doc.data().userId === currentUserId) {
+                patientReports.push({
+                  id: doc.id,
+                  ...doc.data(),
+                });
+              }
+            });
+          }
+
+          setReports(patientReports);
+        }
       } catch (error) {
-        setLoading(false);
-        alert("Error fetching user data");
-        console.error("Error fetching user data:", error);
-        // Consider handling the error, e.g., showing an error message to the user
+        console.error(error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
-  }, [isDoctor, userIds]);
-    const isToday = (timestamp) => {
-    const date = new Date(Number(timestamp));
-    return date.toDateString() === new Date().toDateString();
-  };
+    fetchReports();
+  }, [isDoctor, currentUserId]);
+
+  if (loading) return <Loader>Loading Reports...</Loader>;
+
   return (
     <div>
-      {isDataLoading && <Loader>Loading Reports..</Loader>}
-      {isReportVisible && (
-        <Reports
-          selectedReport={selectedReport}
-          setReportVisible={setReportVisible}
-          userInfo={selectedReportInfo}
-        />
-      )}
-      <h2 className="text-2xl font-semibold mb-4 text-center">
+      <h2 className="text-2xl font-semibold mb-6 text-center">
         Submitted Reports
       </h2>
-      {(userInfo.length==0 && isDoctor) || (timestamps.length==0 && !isDoctor) ?   <h2 className="text-xl font-semibold mb-4 text-center text-gray-700">
-        No submitted reports found
-      </h2> : null}
-       {
-      
-      isDoctor &&
-        userInfo.map((data, idx) => {
-          const timestamp = Number(
-            Object.keys(submittedReports[data.uid]??{}).sort(
-              (a, b) => Number(b) - Number(a)
-            )[0]
-          );
-          const date = new Date(timestamp);
-          return (
-            <div
-              key={idx + data?.uid}
-              className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-lg mt-6"
+
+      {reports.length === 0 && (
+        <p className="text-center text-gray-600">No reports found.</p>
+      )}
+
+      {reports.map((report) => (
+        <div
+          key={report.id}
+          className="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-lg mt-6"
+        >
+          <div className="font-bold text-lg mb-2">
+            {isDoctor ? report.userEmail : "Mental Health Assessment"}
+          </div>
+
+          <div className="text-gray-600 mb-3">
+            Status:{" "}
+            <span
+              className={
+                report.status === "accepted"
+                  ? "text-green-600 font-bold"
+                  : report.status === "rejected"
+                  ? "text-red-600 font-bold"
+                  : "text-yellow-600 font-bold"
+              }
             >
-              <div className="font-bold text-2xl mb-4">{data.displayName}</div>
-              <div className="text-lg text-gray-700">
-                <span className="mr-8 font-medium">
-                  📅{isToday(timestamp) ? "Today" : date.toLocaleDateString()}
-                </span>
-                <span className="font-medium">{date.toLocaleTimeString()}</span>
-              </div>
-              <div className="mx-auto max-w-md text-center">
-                <button
-                  onClick={() => {
-                    setReportVisible(true);
-                    const reports = submittedReports[data.uid];
-                    setSelectedReport(reports);
-                    setSelectedReportInfo(data);
-                  }}
-                  className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition duration-300 ease-in-out"
-                >
+              {report.status}
+            </span>
+          </div>
 
-                  View Report
-                </button>
-              </div>
-            </div>
-          );
-        })} 
-       
-      {!isDoctor &&
-        timestamps
-          .sort((a, b) => Number(b) - Number(a))
-          .map((timestamp, key) => {
-            const date = new Date(Number(timestamp));
-            return (
-              <div
-                key={key + timestamp}
-                className="max-w-2xl mx-auto bg-white p-5 rounded-lg shadow-lg mt-8 transform transition-all duration-300 hover:scale-105 hover:shadow-xl"
-              >
-                <div className="text-2xl font-bold text-gray-800 mb-6 text-center">
-                  {submittedReports[timestamp]?.type === "mental-health"
-                    ? "Mental Health Assessment"
-                    : `Report ${key}`}
-                </div>
+          <button
+            onClick={() => setSelectedReport(report)}
+            className="px-5 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          >
+            View Report
+          </button>
+        </div>
+      ))}
 
-                <div className="flex justify-between items-center text-gray-600">
-                  <div
-                    className="font-bold p-3 rounded-xl text-blue-500 hover:bg-blue-100"
-                    onClick={() =>
-                      setCurrentComponent(
-                        <MentalHealthAssessmentForm
-                          disableFields={true}
-                          isDoctor={isDoctor}
-                          reportData={submittedReports[timestamp]}
-                        />
-                      )
-                    }
-                  >
-                    Details
-                  </div>
-                  <div className="flex space-x-2">
-                    <span className="text-sm font-medium">Submitted : </span>
-                    <span className="text-sm font-medium">
-                      {isToday(timestamp) ? "Today" : date.toLocaleDateString()}
-                    </span>
-                    <span className="text-sm font-medium">
-                      {date.toLocaleTimeString()}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+      {selectedReport && (
+        <Reports
+          selectedReport={selectedReport}
+          doctorId={currentUserId}
+          setReportVisible={() => setSelectedReport(null)}
+        />
+      )}
     </div>
   );
 }

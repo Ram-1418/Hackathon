@@ -14,15 +14,12 @@ import About from "./components/About.jsx";
 import Contact from "./components/Contact.jsx";
 import Register from "./components/Register.jsx";
 import Quiz from "./components/Quiz.jsx";
-
 import Login from "./components/Login.jsx";
 import Dashboard from "./components/Dashboard/Dashboard.jsx";
 import QuizForm from "./components/QuizForm.jsx";
 import AppointmentForm from "./components/Apppointment.jsx";
 import Chatbot from "./components/Chatbot.jsx";
-
-import DoctorLogin from "./components/DoctorLogin.jsx";
-import DoctorRegister from "./components/DoctorRegister.jsx";
+import DoctorAuth from "./components/DoctorAuth.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -43,12 +40,9 @@ const router = createBrowserRouter(
       <Route path="/appointments" element={<AppointmentForm />} />
       <Route path="/dashboard/:doctor" element={<Dashboard />} />
       <Route path="/quiz-form" element={<QuizForm />} />
-      <Route path="/login/:doctor" element={<Login />} />
-      <Route path="/login" element={<Login />} />
       <Route path="/chatbot" element={<Chatbot />} />
-
-      <Route path="/register/doctor" element={<DoctorRegister />} />
-<Route path="/login/doctor" element={<DoctorLogin />} />
+<Route path="/login" element={<Login />} />
+<Route path="/doctor/login" element={<DoctorAuth />} />
 
 
     </Route>
