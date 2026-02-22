@@ -5,24 +5,47 @@ import Navbar from "./components/Navbar/Navbar";
 import Dashboard from "./components/Dashboard/Dashboard";
 import Login from "./components/Login";
 import { NavigateProvider } from "./contexts/navigate";
+import DoctorAuth  from "./components/DoctorAuth";
 
 function Layout() {
   const navigate = useNavigate();
   const location = useLocation();
-  const isDashboard = location.pathname.includes("/dashboard"); // Check if the current route is /dashboard
-  const isLogin = location.pathname.includes("/login");
-  if (isLogin || isDashboard) {
-    return <NavigateProvider value={{navigate}}>{isLogin ? <Login /> : <Dashboard />}</NavigateProvider>;
-  } else {
+
+  const isDashboard = location.pathname.startsWith("/dashboard");
+  const isLogin = location.pathname === "/login";
+  const isDoctorLogin = location.pathname === "/doctor/login";
+
+  if (isLogin) {
     return (
-      <>
-        <Navbar />
-        <Outlet />
-        <Footer />
-      
-      </>
+      <NavigateProvider value={{ navigate }}>
+        <Login />
+      </NavigateProvider>
     );
   }
+
+  if (isDoctorLogin) {
+    return (
+      <NavigateProvider value={{ navigate }}>
+        <DoctorAuth />
+      </NavigateProvider>
+    );
+  }
+
+  if (isDashboard) {
+    return (
+      <NavigateProvider value={{ navigate }}>
+        <Dashboard />
+      </NavigateProvider>
+    );
+  }
+
+  return (
+    <>
+      <Navbar />
+      <Outlet />
+      <Footer />
+    </>
+  );
 }
 
 export default Layout;
