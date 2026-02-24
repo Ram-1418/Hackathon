@@ -1,58 +1,99 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from "react-router-dom";
+import { Mail, Phone, MapPin } from "lucide-react";
 
 function Footer() {
   return (
-    <footer className="bg-teal-800 text-white p-6 text-center rounded-sm ">
-  <div className="container mx-auto"> 
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-      <div className="flex flex-col items-center">
-        <h3 className="font-bold text-lg mb-2">Contact Us</h3>
-        <ul className="text-white">
-          <li><a className='text-blue-400 hover:text-blue-600' href="#">contack@healthfirst.app</a></li>
-          <li><a href="#">+9309839597</a></li>
-          <li><a href="#">Center Timing :<br />Mon-Sat:9am to 8am</a></li>
-          <li><a href="#">contact timing: <br />mon-sat: 9am  to 8am</a></li>
-        </ul>
-      </div>
-      <div className="flex flex-col items-center">
-        <h3 className="text-lg font-bold mb-2">Location(Pune)</h3>
-        <ul className="text-white">
-         <p>Center for mental,</p>
-         <p>102/201 Housing society</p>
-         <p>Sant tukaram nagar,</p>
-         <p>Pune 411 021,MH,india</p>
-        </ul>
-      </div>
-      <div className="flex flex-col items-center">
-        <h3 className="font-bold text-lg mb-2">Important Links</h3>
-        <ul className="text-white">
-         <p>Appointment Booking Policy</p>
-         <p>Privacy policy</p>
-         <p>Term& condition</p>
-         <p>Refund and cancellation</p>
-         <Link to="/login/doctor">
-          Doctors Login
-         </Link>
-        </ul>
-      </div>
-      <div className="flex flex-col items-center">
-        <h3 className="font-bold text-lg mb-2">Recent Posts</h3>
-        <ul className="text-white">
-         <p>Post traumatic growth</p>
-         <p>Understanding trauma</p>
-       
-        </ul>
-      </div>
-      {/* Add more columns for other content if needed */}
-    </div>
-  </div>
-  <p className="border-t border-gray-700 mt-6 pt-4 text-center">
-    Built for health and wellness with ❤️ using Tailwind CSS.
-  </p>
-</footer>
+    <footer className="bg-gradient-to-r from-teal-900 to-teal-700 text-gray-200">
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          
+          {/* Contact Section */}
+          <div>
+            <h3 className="text-xl font-semibold mb-4 text-white">
+              Contact Us
+            </h3>
+            <ul className="space-y-3 text-sm">
+              <li className="flex items-center gap-2 hover:text-white transition">
+                <Mail size={16} />
+                contact@healthfirst.app
+              </li>
+              <li className="flex items-center gap-2 hover:text-white transition">
+                <Phone size={16} />
+                +91 93098 39597
+              </li>
+              <li className="flex items-center gap-2">
+                <MapPin size={16} />
+                Mon–Sat: 9 AM – 8 PM
+              </li>
+            </ul>
+          </div>
 
-  )
+          {/* Location Section */}
+          <div>
+            <h3 className="text-xl font-semibold mb-4 text-white">
+              Our Location (Pune)
+            </h3>
+            <ul className="space-y-2 text-sm">
+              <li>Center for Mental Wellness</li>
+              <li>102/201 Housing Society</li>
+              <li>Sant Tukaram Nagar</li>
+              <li>Pune – 411021, MH, India</li>
+            </ul>
+          </div>
+
+          {/* Important Links */}
+          <div>
+            <h3 className="text-xl font-semibold mb-4 text-white">
+              Important Links
+            </h3>
+            <ul className="space-y-2 text-sm">
+              <li className="hover:text-white transition cursor-pointer">
+                Appointment Booking Policy
+              </li>
+              <li className="hover:text-white transition cursor-pointer">
+                Privacy Policy
+              </li>
+              <li className="hover:text-white transition cursor-pointer">
+                Terms & Conditions
+              </li>
+              <li className="hover:text-white transition cursor-pointer">
+                Refund & Cancellation
+              </li>
+              <li>
+                <Link
+                  to="/login/doctor"
+                  className="text-teal-300 hover:text-white font-medium"
+                >
+                  Doctor Login
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Recent Posts */}
+          <div>
+            <h3 className="text-xl font-semibold mb-4 text-white">
+              Recent Posts
+            </h3>
+            <ul className="space-y-2 text-sm">
+              <li className="hover:text-white transition cursor-pointer">
+                Post Traumatic Growth
+              </li>
+              <li className="hover:text-white transition cursor-pointer">
+                Understanding Trauma
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom Section */}
+        <div className="border-t border-teal-600 mt-10 pt-6 text-center text-sm text-gray-300">
+          © {new Date().getFullYear()} HealthFirst. Built with ❤️ using React & Tailwind CSS.
+        </div>
+      </div>
+    </footer>
+  );
 }
 
-export default Footer
+export default Footer;
