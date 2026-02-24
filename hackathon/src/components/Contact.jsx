@@ -1,71 +1,111 @@
 import React, { useState } from "react";
 
 function Contact() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log("Form submitted:", { name, email, message });
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    setTimeout(() => {
+      console.log("Form submitted:", formData);
+      setLoading(false);
+      setSuccess(true);
+      setFormData({ name: "", email: "", message: "" });
+    }, 1000);
   };
 
   return (
-    <div className="container mx-auto pt-[80px] p-8">
-      <h2 className="text-3xl font-bold mb-6 text-center">Contact Us</h2>
-      <form onSubmit={handleSubmit} className="w-full max-w-lg mx-auto">
-        <div
-          className="mb-4"
-        >
-          <label htmlFor="name" className="block text-gray-700 font-bold mb-2">
-            Name
-          </label>
-          <input
-            type="text"
-            id="name"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label htmlFor="email" className="block text-gray-700 font-bold mb-2">
-            Email
-          </label>
-          <input
-            type="email"
-            id="email"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div className="mb-6">
-          <label
-            htmlFor="message"
-            className="block text-gray-700 font-bold mb-2"
-          >
-            Message
-          </label>
-          <textarea
-            id="message"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            rows="5"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            required
-          />
-        </div>
-        <div className="flex items-center justify-center">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6 py-16">
+      
+      <div className="bg-white shadow-2xl rounded-2xl p-10 w-full max-w-lg">
+        
+        <h2 className="text-4xl font-bold text-center text-gray-800 mb-6">
+          Contact Us
+        </h2>
+
+        <p className="text-center text-gray-500 mb-8">
+          We'd love to hear from you. Send us a message!
+        </p>
+
+        {success && (
+          <div className="bg-green-100 text-green-700 p-3 rounded-lg mb-6 text-center">
+            ✅ Message sent successfully!
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          
+          {/* Name */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">
+              Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none transition"
+              placeholder="Enter your name"
+            />
+          </div>
+
+          {/* Email */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none transition"
+              placeholder="Enter your email"
+            />
+          </div>
+
+          {/* Message */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">
+              Message
+            </label>
+            <textarea
+              id="message"
+              rows="4"
+              value={formData.message}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none transition resize-none"
+              placeholder="Write your message..."
+            />
+          </div>
+
+          {/* Button */}
           <button
             type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            disabled={loading}
+            className="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 rounded-lg transition duration-300"
           >
-            Send
+            {loading ? "Sending..." : "Send Message"}
           </button>
-        </div>
-      </form>
+
+        </form>
+      </div>
     </div>
   );
 }
