@@ -5,9 +5,9 @@ function Footer() {
   return (
     <footer className="bg-gradient-to-r from-teal-900 to-teal-700 text-gray-200">
       <div className="max-w-7xl mx-auto px-6 py-12">
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          
+
           {/* Contact Section */}
           <div>
             <h3 className="text-xl font-semibold mb-4 text-white">
@@ -62,7 +62,7 @@ function Footer() {
               </li>
               <li>
                 <Link
-                  to="/login/doctor"
+                  to="/doctor/login"
                   className="text-teal-300 hover:text-white font-medium"
                 >
                   Doctor Login
