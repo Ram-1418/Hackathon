@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  orderBy,
+} from "firebase/firestore";
 import { db } from "../../../firebase";
 import Loader from "../../Loader";
 import Reports from "./Reports";
@@ -12,62 +18,46 @@ function SubmittedReports({ isDoctor, currentUserId }) {
   useEffect(() => {
     if (!currentUserId) return;
 
-    const fetchReports = async () => {
-      try {
-        setLoading(true);
+    setLoading(true);
 
-        if (isDoctor) {
-          const snapshot = await getDocs(
-            collection(db, "doctors", currentUserId, "patients")
-          );
+    let q;
 
-          const data = snapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
+    if (isDoctor) {
+      q = query(
+        collection(db, "appointments"),
+        where("doctorId", "==", currentUserId),
+        orderBy("appointmentDateTime", "asc")
+      );
+    } else {
+      q = query(
+        collection(db, "appointments"),
+        where("patientId", "==", currentUserId),
+        orderBy("appointmentDateTime", "asc")
+      );
+    }
 
-          setReports(data);
-        } else {
-          const doctorsSnap = await getDocs(collection(db, "doctors"));
-          let patientReports = [];
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setReports(data);
+      setLoading(false);
+    });
 
-          for (const doctorDoc of doctorsSnap.docs) {
-            const patientsSnap = await getDocs(
-              collection(db, "doctors", doctorDoc.id, "patients")
-            );
-
-            patientsSnap.forEach((doc) => {
-              if (doc.data().userId === currentUserId) {
-                patientReports.push({
-                  id: doc.id,
-                  ...doc.data(),
-                });
-              }
-            });
-          }
-
-          setReports(patientReports);
-        }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchReports();
+    return () => unsubscribe();
   }, [isDoctor, currentUserId]);
 
-  if (loading) return <Loader>Loading Reports...</Loader>;
+  if (loading) return <Loader>Loading...</Loader>;
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-6 text-center">
-        Submitted Reports
+      <h2 className="text-2xl font-semibold text-center mb-6">
+        Appointments
       </h2>
 
       {reports.length === 0 && (
-        <p className="text-center text-gray-600">No reports found.</p>
+        <p className="text-center text-gray-500">No Appointments Found</p>
       )}
 
       {reports.map((report) => (
@@ -75,17 +65,17 @@ function SubmittedReports({ isDoctor, currentUserId }) {
           key={report.id}
           className="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-lg mt-6"
         >
-          <div className="font-bold text-lg mb-2">
-            {isDoctor ? report.userEmail : "Mental Health Assessment"}
+          <div className="font-bold mb-2">
+            {isDoctor ? report.patientEmail : "Doctor Appointment"}
           </div>
 
-          <div className="text-gray-600 mb-3">
+          <div>
             Status:{" "}
             <span
               className={
-                report.status === "accepted"
+                report.status === "APPROVED"
                   ? "text-green-600 font-bold"
-                  : report.status === "rejected"
+                  : report.status === "REJECTED"
                   ? "text-red-600 font-bold"
                   : "text-yellow-600 font-bold"
               }
@@ -94,11 +84,23 @@ function SubmittedReports({ isDoctor, currentUserId }) {
             </span>
           </div>
 
+          {/* Safe Date Display */}
+          {report.appointmentDateTime && (
+            <div>
+              Date:{" "}
+              {report.appointmentDateTime.seconds
+                ? new Date(
+                    report.appointmentDateTime.seconds * 1000
+                  ).toLocaleString()
+                : new Date(report.appointmentDateTime).toLocaleString()}
+            </div>
+          )}
+
           <button
             onClick={() => setSelectedReport(report)}
-            className="px-5 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+            className="mt-3 px-5 py-2 bg-blue-500 text-white rounded"
           >
-            View Report
+            View Details
           </button>
         </div>
       ))}
@@ -106,7 +108,6 @@ function SubmittedReports({ isDoctor, currentUserId }) {
       {selectedReport && (
         <Reports
           selectedReport={selectedReport}
-          doctorId={currentUserId}
           setReportVisible={() => setSelectedReport(null)}
         />
       )}
