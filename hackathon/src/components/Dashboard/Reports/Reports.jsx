@@ -4,9 +4,9 @@ import { faArrowLeft, faClose } from "@fortawesome/free-solid-svg-icons";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebase";
 
-function Reports({ selectedReport, setReportVisible }) {
+function Reports({ selectedReport, setReportVisible, isDoctor }) {
 
-  // 🔥 Update appointment status
+  // 🔥 Update appointment status (Doctor only)
   const handleStatusUpdate = async (newStatus) => {
     try {
       await updateDoc(
@@ -38,6 +38,7 @@ function Reports({ selectedReport, setReportVisible }) {
     <div className="h-screen w-screen fixed top-0 left-0 bg-slate-900/80 z-10 flex justify-center items-center">
       <div className="w-full max-w-3xl bg-white p-6 rounded-lg shadow-lg">
 
+        {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <FontAwesomeIcon
             onClick={() => setReportVisible(false)}
@@ -52,6 +53,7 @@ function Reports({ selectedReport, setReportVisible }) {
           />
         </div>
 
+        {/* Details Section */}
         <div className="space-y-3">
 
           <div><strong>Email:</strong> {selectedReport.patientEmail}</div>
@@ -93,8 +95,27 @@ function Reports({ selectedReport, setReportVisible }) {
             </span>
           </div>
 
-          {/* Accept / Reject Buttons */}
-          {selectedReport.status === "PENDING" && (
+          {/* 🔥 User Friendly Messages */}
+          {!isDoctor && selectedReport.status === "PENDING" && (
+            <div className="mt-4 text-yellow-600 font-semibold">
+              ⏳ Your appointment request is waiting for doctor's approval.
+            </div>
+          )}
+
+          {!isDoctor && selectedReport.status === "APPROVED" && (
+            <div className="mt-4 text-green-600 font-semibold">
+              🎉 Your appointment has been approved by the doctor.
+            </div>
+          )}
+
+          {!isDoctor && selectedReport.status === "REJECTED" && (
+            <div className="mt-4 text-red-600 font-semibold">
+              ❌ Your appointment request was rejected by the doctor.
+            </div>
+          )}
+
+          {/* 🔥 Accept / Reject Buttons (Doctor Only) */}
+          {isDoctor && selectedReport.status === "PENDING" && (
             <div className="flex gap-4 mt-6">
               <button
                 onClick={() => handleStatusUpdate("APPROVED")}
