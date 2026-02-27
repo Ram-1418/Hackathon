@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { auth, db } from "../../firebase";
-import { collection, getDocs, addDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  addDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 
 function MentalHealthAssessmentForm({ disableFields }) {
-
   const [formData, setFormData] = useState({
     mood: "",
     sleepQuality: "",
@@ -14,24 +18,21 @@ function MentalHealthAssessmentForm({ disableFields }) {
     suicidalThoughts: "",
     additionalNotes: "",
     appointment: false,
+    appointmentDate: "",
+    appointmentTime: "",
   });
 
   const [doctors, setDoctors] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState("");
 
-  // 🔥 Fetch doctors from Firestore
   useEffect(() => {
     const fetchDoctors = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, "doctors"));
-        const doctorList = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setDoctors(doctorList);
-      } catch (error) {
-        console.error("Error fetching doctors:", error);
-      }
+      const snapshot = await getDocs(collection(db, "doctors"));
+      const doctorList = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setDoctors(doctorList);
     };
 
     fetchDoctors();
@@ -49,32 +50,49 @@ function MentalHealthAssessmentForm({ disableFields }) {
     e.preventDefault();
 
     const user = auth.currentUser;
-
     if (!user) {
       alert("Please login first");
       return;
     }
 
-    if (formData.appointment && !selectedDoctor) {
-      alert("Please select a doctor");
+    if (
+      formData.appointment &&
+      (!selectedDoctor ||
+        !formData.appointmentDate ||
+        !formData.appointmentTime)
+    ) {
+      alert("Please select doctor, date and time");
       return;
     }
 
     try {
-      await addDoc(
-        collection(db, "doctors", selectedDoctor, "patients"),
-        {
-          userId: user.uid,
-          userEmail: user.email,
-          ...formData,
-          submittedAt: new Date(),
-          status: formData.appointment ? "pending" : "none", 
-        }
-      );
+      let appointmentDateTime = null;
 
-      alert("Assessment submitted successfully!");
+      if (formData.appointment) {
+        appointmentDateTime = new Date(
+          `${formData.appointmentDate}T${formData.appointmentTime}`
+        );
+      }
 
-      // Reset form
+      await addDoc(collection(db, "appointments"), {
+        doctorId: selectedDoctor,
+        patientId: user.uid,
+        patientEmail: user.email,
+        mood: formData.mood,
+        sleepQuality: formData.sleepQuality,
+        stressLevel: formData.stressLevel,
+        anxietyLevel: formData.anxietyLevel,
+        energyLevel: formData.energyLevel,
+        appetite: formData.appetite,
+        suicidalThoughts: formData.suicidalThoughts,
+        additionalNotes: formData.additionalNotes,
+        appointmentDateTime,
+        status: "PENDING",
+        createdAt: serverTimestamp(),
+      });
+
+      alert("Appointment submitted successfully!");
+
       setFormData({
         mood: "",
         sleepQuality: "",
@@ -85,12 +103,13 @@ function MentalHealthAssessmentForm({ disableFields }) {
         suicidalThoughts: "",
         additionalNotes: "",
         appointment: false,
+        appointmentDate: "",
+        appointmentTime: "",
       });
 
       setSelectedDoctor("");
-
     } catch (error) {
-      console.error("Error submitting:", error);
+      console.error(error);
     }
   };
 
@@ -101,14 +120,11 @@ function MentalHealthAssessmentForm({ disableFields }) {
       </h2>
 
       <form onSubmit={handleSubmit}>
-
-        {/* Mood */}
         <select
           name="mood"
           value={formData.mood}
           onChange={handleChange}
           required
-          disabled={disableFields}
           className="w-full p-3 border rounded-lg mb-4"
         >
           <option value="">Select Mood</option>
@@ -119,156 +135,122 @@ function MentalHealthAssessmentForm({ disableFields }) {
           <option value="Very Sad">Very Sad</option>
         </select>
 
-        {/* Sleep */}
         <select
           name="sleepQuality"
           value={formData.sleepQuality}
           onChange={handleChange}
           required
-          disabled={disableFields}
           className="w-full p-3 border rounded-lg mb-4"
         >
           <option value="">Select Sleep Quality</option>
           <option value="Excellent">Excellent</option>
           <option value="Good">Good</option>
-          <option value="Fair">Fair</option>
           <option value="Poor">Poor</option>
           <option value="Very Poor">Very Poor</option>
         </select>
 
-        {/* Stress */}
         <select
           name="stressLevel"
           value={formData.stressLevel}
           onChange={handleChange}
           required
-          disabled={disableFields}
           className="w-full p-3 border rounded-lg mb-4"
         >
           <option value="">Select Stress Level</option>
-          <option value="Not Stressed">Not Stressed</option>
-          <option value="Slightly Stressed">Slightly Stressed</option>
-          <option value="Moderately Stressed">Moderately Stressed</option>
-          <option value="Very Stressed">Very Stressed</option>
-          <option value="Extremely Stressed">Extremely Stressed</option>
+          <option value="Low">Low</option>
+          <option value="Moderate">Moderate</option>
+          <option value="High">High</option>
+          <option value="Very High">Very High</option>
         </select>
 
-        {/* Anxiety */}
         <select
           name="anxietyLevel"
           value={formData.anxietyLevel}
           onChange={handleChange}
           required
-          disabled={disableFields}
           className="w-full p-3 border rounded-lg mb-4"
         >
           <option value="">Select Anxiety Level</option>
-          <option value="Not Anxious">Not Anxious</option>
-          <option value="Slightly Anxious">Slightly Anxious</option>
-          <option value="Moderately Anxious">Moderately Anxious</option>
-          <option value="Very Anxious">Very Anxious</option>
-          <option value="Extremely Anxious">Extremely Anxious</option>
+          <option value="Low">Low</option>
+          <option value="Moderate">Moderate</option>
+          <option value="High">High</option>
+          <option value="Very High">Very High</option>
         </select>
 
-        {/* Energy */}
-        <select
-          name="energyLevel"
-          value={formData.energyLevel}
-          onChange={handleChange}
-          required
-          disabled={disableFields}
-          className="w-full p-3 border rounded-lg mb-4"
-        >
-          <option value="">Select Energy Level</option>
-          <option value="Very Energetic">Very Energetic</option>
-          <option value="Energetic">Energetic</option>
-          <option value="Neutral">Neutral</option>
-          <option value="Tired">Tired</option>
-          <option value="Exhausted">Exhausted</option>
-        </select>
-
-        {/* Appetite */}
-        <select
-          name="appetite"
-          value={formData.appetite}
-          onChange={handleChange}
-          required
-          disabled={disableFields}
-          className="w-full p-3 border rounded-lg mb-4"
-        >
-          <option value="">Select Appetite Level</option>
-          <option value="Very Good">Very Good</option>
-          <option value="Good">Good</option>
-          <option value="Normal">Normal</option>
-          <option value="Poor">Poor</option>
-          <option value="Very Poor">Very Poor</option>
-        </select>
-
-        {/* Suicidal Thoughts */}
         <select
           name="suicidalThoughts"
           value={formData.suicidalThoughts}
           onChange={handleChange}
           required
-          disabled={disableFields}
           className="w-full p-3 border rounded-lg mb-4"
         >
           <option value="">Have you had thoughts of self-harm?</option>
-          <option value="No">No</option>
-          <option value="Yes, Occasionally">Yes, Occasionally</option>
-          <option value="Yes, Frequently">Yes, Frequently</option>
+          <option value="None">None</option>
+          <option value="Occasional">Occasional</option>
+          <option value="Frequent">Frequent</option>
         </select>
 
-        {/* Additional Notes */}
         <textarea
           name="additionalNotes"
           value={formData.additionalNotes}
           onChange={handleChange}
-          disabled={disableFields}
-          placeholder="Is there anything else you'd like to share?"
+          placeholder="Additional notes"
           className="w-full p-3 border rounded-lg mb-4"
-          rows="4"
         />
 
-        {/* Appointment Checkbox */}
         <div className="mb-4">
           <input
             type="checkbox"
             name="appointment"
             checked={formData.appointment}
             onChange={handleChange}
-            disabled={disableFields}
           />
-          <label className="ml-2 font-semibold">
-            Do you want to book an appointment?
-          </label>
+          <label className="ml-2">Book Appointment?</label>
         </div>
 
-        {/* Doctor Dropdown */}
         {formData.appointment && (
-          <select
-            value={selectedDoctor}
-            onChange={(e) => setSelectedDoctor(e.target.value)}
-            required
-            className="w-full p-3 border rounded-lg mb-4"
-          >
-            <option value="">Select Doctor</option>
-            {doctors.map((doctor) => (
-              <option key={doctor.id} value={doctor.id}>
-                {doctor.displayName}
-              </option>
-            ))}
-          </select>
+          <>
+            <select
+              value={selectedDoctor}
+              onChange={(e) => setSelectedDoctor(e.target.value)}
+              required
+              className="w-full p-3 border rounded-lg mb-4"
+            >
+              <option value="">Select Doctor</option>
+              {doctors.map((doctor) => (
+                <option key={doctor.id} value={doctor.id}>
+                  {doctor.displayName}
+                </option>
+              ))}
+            </select>
+
+            <input
+              type="date"
+              name="appointmentDate"
+              min={new Date().toISOString().split("T")[0]}
+              value={formData.appointmentDate}
+              onChange={handleChange}
+              required
+              className="w-full p-3 border rounded-lg mb-4"
+            />
+
+            <input
+              type="time"
+              name="appointmentTime"
+              value={formData.appointmentTime}
+              onChange={handleChange}
+              required
+              className="w-full p-3 border rounded-lg mb-4"
+            />
+          </>
         )}
 
-        {!disableFields && (
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-3 rounded-lg"
-          >
-            Submit Assessment
-          </button>
-        )}
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white py-3 rounded-lg"
+        >
+          Submit
+        </button>
       </form>
     </div>
   );
