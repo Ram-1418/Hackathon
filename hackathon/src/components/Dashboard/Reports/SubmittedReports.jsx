@@ -107,9 +107,10 @@ function SubmittedReports({ isDoctor, currentUserId }) {
 
       {selectedReport && (
         <Reports
-          selectedReport={selectedReport}
-          setReportVisible={() => setSelectedReport(null)}
-        />
+  selectedReport={selectedReport}
+  setReportVisible={() => setSelectedReport(null)}
+  isDoctor={isDoctor}
+/>
       )}
     </div>
   );
