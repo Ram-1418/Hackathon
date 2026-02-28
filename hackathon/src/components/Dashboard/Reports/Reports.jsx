@@ -4,12 +4,13 @@ import { faArrowLeft, faClose } from "@fortawesome/free-solid-svg-icons";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebase";
 
-function Reports({ selectedReport, setReportVisible, doctorId }) {
+function Reports({ selectedReport, setReportVisible, isDoctor }) {
 
+  // 🔥 Update appointment status (Doctor only)
   const handleStatusUpdate = async (newStatus) => {
     try {
       await updateDoc(
-        doc(db, "doctors", doctorId, "patients", selectedReport.id),
+        doc(db, "appointments", selectedReport.id),
         {
           status: newStatus,
         }
@@ -22,7 +23,7 @@ function Reports({ selectedReport, setReportVisible, doctorId }) {
     }
   };
 
-  // ✅ Safe Date Formatter
+  // 🔥 Safe Date Formatter
   const formatDate = (timestamp) => {
     if (!timestamp) return "N/A";
 
@@ -37,13 +38,14 @@ function Reports({ selectedReport, setReportVisible, doctorId }) {
     <div className="h-screen w-screen fixed top-0 left-0 bg-slate-900/80 z-10 flex justify-center items-center">
       <div className="w-full max-w-3xl bg-white p-6 rounded-lg shadow-lg">
 
+        {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <FontAwesomeIcon
             onClick={() => setReportVisible(false)}
             icon={faArrowLeft}
             className="cursor-pointer text-xl"
           />
-          <h2 className="text-2xl font-bold">Report Details</h2>
+          <h2 className="text-2xl font-bold">Appointment Details</h2>
           <FontAwesomeIcon
             onClick={() => setReportVisible(false)}
             icon={faClose}
@@ -51,11 +53,18 @@ function Reports({ selectedReport, setReportVisible, doctorId }) {
           />
         </div>
 
+        {/* Details Section */}
         <div className="space-y-3">
 
-          <div><strong>Email:</strong> {selectedReport.userEmail}</div>
+          <div><strong>Email:</strong> {selectedReport.patientEmail}</div>
 
-          <div><strong>Submitted On:</strong> {formatDate(selectedReport.submittedAt)}</div>
+          {/* Appointment Date */}
+          {selectedReport.appointmentDateTime && (
+            <div>
+              <strong>Appointment Date & Time:</strong>{" "}
+              {formatDate(selectedReport.appointmentDateTime)}
+            </div>
+          )}
 
           <div><strong>Mood:</strong> {selectedReport.mood}</div>
           <div><strong>Sleep Quality:</strong> {selectedReport.sleepQuality}</div>
@@ -70,13 +79,14 @@ function Reports({ selectedReport, setReportVisible, doctorId }) {
             </div>
           )}
 
+          {/* Status */}
           <div>
             <strong>Status:</strong>{" "}
             <span
               className={
-                selectedReport.status === "accepted"
+                selectedReport.status === "APPROVED"
                   ? "text-green-600 font-bold"
-                  : selectedReport.status === "rejected"
+                  : selectedReport.status === "REJECTED"
                   ? "text-red-600 font-bold"
                   : "text-yellow-600 font-bold"
               }
@@ -85,24 +95,44 @@ function Reports({ selectedReport, setReportVisible, doctorId }) {
             </span>
           </div>
 
-          {selectedReport.appointment &&
-            selectedReport.status === "pending" && (
-              <div className="flex gap-4 mt-6">
-                <button
-                  onClick={() => handleStatusUpdate("accepted")}
-                  className="px-6 py-2 bg-green-500 text-white rounded-lg"
-                >
-                  Accept
-                </button>
+          {/* 🔥 User Friendly Messages */}
+          {!isDoctor && selectedReport.status === "PENDING" && (
+            <div className="mt-4 text-yellow-600 font-semibold">
+              ⏳ Your appointment request is waiting for doctor's approval.
+            </div>
+          )}
 
-                <button
-                  onClick={() => handleStatusUpdate("rejected")}
-                  className="px-6 py-2 bg-red-500 text-white rounded-lg"
-                >
-                  Reject
-                </button>
-              </div>
-            )}
+          {!isDoctor && selectedReport.status === "APPROVED" && (
+            <div className="mt-4 text-green-600 font-semibold">
+              🎉 Your appointment has been approved by the doctor.
+            </div>
+          )}
+
+          {!isDoctor && selectedReport.status === "REJECTED" && (
+            <div className="mt-4 text-red-600 font-semibold">
+              ❌ Your appointment request was rejected by the doctor.
+            </div>
+          )}
+
+          {/* 🔥 Accept / Reject Buttons (Doctor Only) */}
+          {isDoctor && selectedReport.status === "PENDING" && (
+            <div className="flex gap-4 mt-6">
+              <button
+                onClick={() => handleStatusUpdate("APPROVED")}
+                className="px-6 py-2 bg-green-500 text-white rounded-lg"
+              >
+                Accept
+              </button>
+
+              <button
+                onClick={() => handleStatusUpdate("REJECTED")}
+                className="px-6 py-2 bg-red-500 text-white rounded-lg"
+              >
+                Reject
+              </button>
+            </div>
+          )}
+
         </div>
       </div>
     </div>
