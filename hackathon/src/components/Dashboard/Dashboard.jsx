@@ -1,72 +1,72 @@
 import React, { useState, useEffect, useContext } from "react";
-import { doc, getDoc} from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 import { db, auth } from "../../firebase";
-import {  useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Content from "./Content";
 import { NavigateContext } from "../../contexts/navigate";
 
 function Dashboard() {
-
   const { doctor } = useParams();
-  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const isDoctor = doctor === "doctor";
+
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const [activeTab, setActiveTab] = useState("Profile");
   const [sidebarState, setSidebarState] = useState(false);
-  const {navigate} = useContext(NavigateContext);
   const [userData, setUserData] = useState(null);
-  window.addEventListener("resize", () => {
-    setScreenWidth(window.innerWidth);
-  });
+  const [loading, setLoading] = useState(true);
 
-  const fetchUserData = async () => {
-    const user = auth.currentUser; // Get the currently logged-in user
-      const docRef = doc(db, "users", user.uid);
-      const docSnap = await getDoc(docRef);
-      
-      if (docSnap.exists()) {
-       return { uid: user.uid, ...docSnap.data() };// Return the user data
-      } else {
-        console.log("No user document found!");
-        navigate("/login");
-        return null;
-      }
-  };
-  const fetchDoctorData = async () => {
-    const user = auth.currentUser; // Get the currently logged-in user
-    if (user) {
-      // Check if a user is signed in
-      const docRef = doc(db, "doctors", user.uid); // Use "doctors" collection
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        return { uid: user.uid, ...docSnap.data() };// Return the doctor's data
-      } else {
-        console.log("No doctor document found!");
-        navigate("/login/doctor");
-        return null;
-      }
-    } else {
-      console.log("No user is signed in");
-      navigate("/login/doctor");
-      return null;
-    }
-  };
+  const { navigate } = useContext(NavigateContext);
+
+  // ✅ Fix resize memory leak
   useEffect(() => {
-    const fetchUser = async () => {
-      const data = await (isDoctor ? fetchDoctorData() : fetchUserData());
-      if(data==null){
-        isDoctor?navigate("/login/doctor"):navigate("/login");
+    const handleResize = () => setScreenWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // ✅ Proper Firebase Auth Listener (Fix refresh logout issue)
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        isDoctor ? navigate("/login/doctor") : navigate("/login");
         return;
       }
-      setUserData(data);
-    };
 
-    fetchUser();
-  }, []);
+      try {
+        const collectionName = isDoctor ? "doctors" : "users";
+        const docRef = doc(db, collectionName, user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setUserData({ uid: user.uid, ...docSnap.data() });
+        } else {
+          console.log("No document found!");
+          isDoctor ? navigate("/login/doctor") : navigate("/login");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [isDoctor, navigate]);
+
+  // ✅ Loading screen while Firebase checks session
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <h1 className="text-xl font-semibold">Loading Dashboard...</h1>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gray-100 min-h-screen flex">
-
       <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
