@@ -1,53 +1,95 @@
-import React from 'react';
- // Import the CSS file for styling
+import React from "react";
 
 function App() {
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-center mb-8">How We Can Help</h1>
+    <section className="bg-gray-100 py-16">
+      <div className="max-w-6xl mx-auto px-6">
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="bg-white rounded-lg shadow-md p-4">
-          <h2 className="text-xl font-semibold mb-2">Free 24 X 7 X 365 Mental Health Support</h2>
-          <p className="text-gray-700">
-            Free mental health support service is available 24X7X365 days. Don't hesitate to reach out to us. A single conversation may help you feel much better.
-          </p>
-          <div className="flex justify-center mt-4">
-            <svg className="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h4m-4 0v4m0-4h4m-4 0V8m0 0l3 3m-3-3l3 3"></path></svg>
-          </div>
-        </div>
+        <h1 className="text-3xl font-bold text-center mb-12">
+          How We Can Help
+        </h1>
 
-        <div className="bg-white rounded-lg shadow-md p-4">
-          <h2 className="text-xl font-semibold mb-2">Paid Consultation</h2>
-          <p className="text-gray-700">
-            Opt for one or more rounds of paid video/telephonic consultations/therapy sessions with our expert counsellors of your choice to deal with mental health concerns that need extensive, continuous support.
-          </p>
-          <div className="flex justify-center mt-4">
-            <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 6l-2-2-4 4"></path></svg>
-          </div>
-        </div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
 
-        <div className="bg-white rounded-lg shadow-md p-4">
-          <h2 className="text-xl font-semibold mb-2">Skill Academy</h2>
-          <p className="text-gray-700">
-            Employees and Volunteers, most of who have a background in Psychology, are trained by experienced and licensed mental health professionals. It is compulsory for all our Employees and Volunteers to sit through an extensive virtual training session. This training equips them to manage crisis conversations effectively.
-          </p>
-          <div className="flex justify-center mt-4">
-            <svg className="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8l-4-4-4 4"></path></svg>
+          {/* Card 1 */}
+          <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition duration-300">
+            <h2 className="text-xl font-semibold mb-3">
+              Free 24×7×365 Mental Health Support
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Free mental health support is available 24/7 throughout the year.
+              Don’t hesitate to reach out — a single conversation may help you feel better.
+            </p>
+            <div className="flex justify-center">
+              <div className="bg-blue-100 p-3 rounded-full">
+                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                    d="M12 8v4m0 4h4m-4 0v4m0-4h4m-4 0V8m0 0l3 3m-3-3l3 3" />
+                </svg>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div className="bg-white rounded-lg shadow-md p-4">
-          <h2 className="text-xl font-semibold mb-2">Raise Awareness & Build Advocacy</h2>
-          <p className="text-gray-700">
-            Stigma keeps people from addressing mental health issues. We work with governments, educational institutions, civil society and media to combat the bias and build support for mental health counselling and interventions.
-          </p>
-          <div className="flex justify-center mt-4">
-            <svg className="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8l-4-4-4 4"></path></svg>
+          {/* Card 2 */}
+          <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition duration-300">
+            <h2 className="text-xl font-semibold mb-3">
+              Paid Consultation
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Book video or telephonic therapy sessions with expert counsellors
+              for continuous professional mental health support.
+            </p>
+            <div className="flex justify-center">
+              <div className="bg-green-100 p-3 rounded-full">
+                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                    d="M9 12l2 2 4-4m6 6l-2-2-4 4" />
+                </svg>
+              </div>
+            </div>
           </div>
+
+          {/* Card 3 */}
+          <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition duration-300">
+            <h2 className="text-xl font-semibold mb-3">
+              Skill Academy
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Our trained professionals undergo extensive virtual training to
+              effectively manage crisis conversations and provide quality care.
+            </p>
+            <div className="flex justify-center">
+              <div className="bg-yellow-100 p-3 rounded-full">
+                <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                    d="M12 4v16m8-8l-4-4-4 4" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 4 */}
+          <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition duration-300">
+            <h2 className="text-xl font-semibold mb-3">
+              Raise Awareness & Advocacy
+            </h2>
+            <p className="text-gray-600 mb-6">
+              We collaborate with institutions and communities to reduce stigma
+              and promote mental health awareness.
+            </p>
+            <div className="flex justify-center">
+              <div className="bg-purple-100 p-3 rounded-full">
+                <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                    d="M12 4v16m8-8l-4-4-4 4" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 
