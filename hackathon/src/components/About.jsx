@@ -6,7 +6,7 @@ function About() {
     {
       name: "Jayesh Pandhare",
       // role: "Backend Developer",
-      image: "./jayesh.jpg",
+      image: "./pandhare.jpg",
     },
     {
       name: "Sandesha Sawant",
