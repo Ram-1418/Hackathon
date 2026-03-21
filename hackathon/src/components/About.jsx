@@ -4,19 +4,19 @@ import { faUserDoctor, faAmbulance, faSyringe } from "@fortawesome/free-solid-sv
 function About() {
   const developers = [
     {
-      name: "Sonu Shivcharan",
+      name: "Jayesh Pandhare",
       // role: "Backend Developer",
-      image: "./shivcharan.jfif",
+      image: "./jayesh.jpg",
     },
     {
-      name: "Jayesh Pandhare",
+      name: "Sandesha Sawant",
       // role: "Frontend Developer",
-      image: "./jayesh.webp",
+      image: "./sandesha.jpg",
     },
     {
       name: "Rameshwar Patil",
       // role: "Frontend Developer",
-      image: "./ram.png",
+      image: "./patil.jpg",
     },
   ];
 
