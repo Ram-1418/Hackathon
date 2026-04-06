@@ -24,6 +24,7 @@ function MentalHealthAssessmentForm({ disableFields }) {
 
   const [doctors, setDoctors] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState("");
+  const [specialization, setSpecialization] = useState(""); // ✅ NEW
 
   useEffect(() => {
     const fetchDoctors = async () => {
@@ -61,7 +62,7 @@ function MentalHealthAssessmentForm({ disableFields }) {
         !formData.appointmentDate ||
         !formData.appointmentTime)
     ) {
-      alert("Please select doctor, date and time");
+      alert("Please select specialization, doctor, date and time");
       return;
     }
 
@@ -76,6 +77,7 @@ function MentalHealthAssessmentForm({ disableFields }) {
 
       await addDoc(collection(db, "appointments"), {
         doctorId: selectedDoctor,
+        specialization: specialization, // ✅ SAVE specialization
         patientId: user.uid,
         patientEmail: user.email,
         mood: formData.mood,
@@ -93,6 +95,7 @@ function MentalHealthAssessmentForm({ disableFields }) {
 
       alert("Appointment submitted successfully!");
 
+      // reset
       setFormData({
         mood: "",
         sleepQuality: "",
@@ -108,6 +111,7 @@ function MentalHealthAssessmentForm({ disableFields }) {
       });
 
       setSelectedDoctor("");
+      setSpecialization("");
     } catch (error) {
       console.error(error);
     }
@@ -120,6 +124,7 @@ function MentalHealthAssessmentForm({ disableFields }) {
       </h2>
 
       <form onSubmit={handleSubmit}>
+        {/* Mood */}
         <select
           name="mood"
           value={formData.mood}
@@ -135,6 +140,7 @@ function MentalHealthAssessmentForm({ disableFields }) {
           <option value="Very Sad">Very Sad</option>
         </select>
 
+        {/* Sleep */}
         <select
           name="sleepQuality"
           value={formData.sleepQuality}
@@ -149,6 +155,7 @@ function MentalHealthAssessmentForm({ disableFields }) {
           <option value="Very Poor">Very Poor</option>
         </select>
 
+        {/* Stress */}
         <select
           name="stressLevel"
           value={formData.stressLevel}
@@ -163,6 +170,7 @@ function MentalHealthAssessmentForm({ disableFields }) {
           <option value="Very High">Very High</option>
         </select>
 
+        {/* Anxiety */}
         <select
           name="anxietyLevel"
           value={formData.anxietyLevel}
@@ -177,6 +185,7 @@ function MentalHealthAssessmentForm({ disableFields }) {
           <option value="Very High">Very High</option>
         </select>
 
+        {/* Suicidal Thoughts */}
         <select
           name="suicidalThoughts"
           value={formData.suicidalThoughts}
@@ -190,6 +199,7 @@ function MentalHealthAssessmentForm({ disableFields }) {
           <option value="Frequent">Frequent</option>
         </select>
 
+        {/* Notes */}
         <textarea
           name="additionalNotes"
           value={formData.additionalNotes}
@@ -198,6 +208,7 @@ function MentalHealthAssessmentForm({ disableFields }) {
           className="w-full p-3 border rounded-lg mb-4"
         />
 
+        {/* Appointment Checkbox */}
         <div className="mb-4">
           <input
             type="checkbox"
@@ -210,6 +221,31 @@ function MentalHealthAssessmentForm({ disableFields }) {
 
         {formData.appointment && (
           <>
+            {/* ✅ Specialization Dropdown */}
+            <select
+              value={specialization}
+              onChange={(e) => {
+                setSpecialization(e.target.value);
+                setSelectedDoctor("");
+              }}
+              required
+              className="w-full p-3 border rounded-lg mb-4"
+            >
+              <option value="">Select Specialization</option>
+              <option value="Psychiatrist">Psychiatrist</option>
+              <option value="Clinical Psychologist">
+                Clinical Psychologist
+              </option>
+              <option value="Counseling Psychologist">
+                Counseling Psychologist
+              </option>
+              <option value="Child Psychologist">Child Psychologist</option>
+              <option value="Addiction Specialist">
+                Addiction Specialist
+              </option>
+            </select>
+
+            {/* ✅ Filtered Doctor Dropdown */}
             <select
               value={selectedDoctor}
               onChange={(e) => setSelectedDoctor(e.target.value)}
@@ -217,13 +253,19 @@ function MentalHealthAssessmentForm({ disableFields }) {
               className="w-full p-3 border rounded-lg mb-4"
             >
               <option value="">Select Doctor</option>
-              {doctors.map((doctor) => (
-                <option key={doctor.id} value={doctor.id}>
-                  {doctor.displayName}
-                </option>
-              ))}
+
+              {doctors
+                .filter(
+                  (doctor) => doctor.specialization === specialization
+                )
+                .map((doctor) => (
+                  <option key={doctor.id} value={doctor.id}>
+                    {doctor.displayName} ({doctor.specialization})
+                  </option>
+                ))}
             </select>
 
+            {/* Date */}
             <input
               type="date"
               name="appointmentDate"
@@ -234,6 +276,7 @@ function MentalHealthAssessmentForm({ disableFields }) {
               className="w-full p-3 border rounded-lg mb-4"
             />
 
+            {/* Time */}
             <input
               type="time"
               name="appointmentTime"
