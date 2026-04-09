@@ -17,6 +17,7 @@ function SubmittedReports({ isDoctor, currentUserId }) {
 
   useEffect(() => {
     if (!currentUserId) return;
+    console.log(reports);
 
     setLoading(true);
 
@@ -50,6 +51,8 @@ function SubmittedReports({ isDoctor, currentUserId }) {
 
   if (loading) return <Loader>Loading...</Loader>;
 
+  console.log("Current User:", currentUserId);
+
   return (
     <div>
       <h2 className="text-2xl font-semibold text-center mb-6">
@@ -76,8 +79,8 @@ function SubmittedReports({ isDoctor, currentUserId }) {
                 report.status === "APPROVED"
                   ? "text-green-600 font-bold"
                   : report.status === "REJECTED"
-                  ? "text-red-600 font-bold"
-                  : "text-yellow-600 font-bold"
+                    ? "text-red-600 font-bold"
+                    : "text-yellow-600 font-bold"
               }
             >
               {report.status}
@@ -90,14 +93,17 @@ function SubmittedReports({ isDoctor, currentUserId }) {
               Date:{" "}
               {report.appointmentDateTime.seconds
                 ? new Date(
-                    report.appointmentDateTime.seconds * 1000
-                  ).toLocaleString()
+                  report.appointmentDateTime.seconds * 1000
+                ).toLocaleString()
                 : new Date(report.appointmentDateTime).toLocaleString()}
             </div>
           )}
 
           <button
-            onClick={() => setSelectedReport(report)}
+            onClick={() => {
+              const latestReport = reports.find(r => r.id === report.id);
+              setSelectedReport(latestReport);
+            }}
             className="mt-3 px-5 py-2 bg-blue-500 text-white rounded"
           >
             View Details
@@ -107,10 +113,11 @@ function SubmittedReports({ isDoctor, currentUserId }) {
 
       {selectedReport && (
         <Reports
-  selectedReport={selectedReport}
-  setReportVisible={() => setSelectedReport(null)}
-  isDoctor={isDoctor}
-/>
+          selectedReport={selectedReport}
+          reports={reports}
+          setReportVisible={() => setSelectedReport(null)}
+          isDoctor={isDoctor}
+        />
       )}
     </div>
   );
