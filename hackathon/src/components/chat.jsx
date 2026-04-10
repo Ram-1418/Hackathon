@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
     collection,
     addDoc,
@@ -9,7 +9,9 @@ import {
 } from "firebase/firestore";
 import { db, auth } from "../firebase";
 
-function Chat({ chatId }) {
+
+// eslint-disable-next-line react/prop-types
+function Chat({ chatId, onClose, patientName, doctorName }) {
     const [messages, setMessages] = useState([]);
     const [text, setText] = useState("");
     const bottomRef = useRef(null);
@@ -18,6 +20,7 @@ function Chat({ chatId }) {
         return <p className="p-4 text-center">Loading chat...</p>;
     }
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
         const q = query(
             collection(db, "chats", chatId, "messages"),
@@ -32,10 +35,21 @@ function Chat({ chatId }) {
         return () => unsubscribe();
     }, [chatId]);
 
-    // Auto scroll to bottom
+    // Auto scroll
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
+
+    // ESC to close
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useEffect(() => {
+        const handleEsc = (e) => {
+            if (e.key === "Escape") onClose();
+        };
+        window.addEventListener("keydown", handleEsc);
+        return () => window.removeEventListener("keydown", handleEsc);
+    }, [onClose]);
 
     const sendMessage = async () => {
         if (!text.trim()) return;
@@ -49,16 +63,32 @@ function Chat({ chatId }) {
         setText("");
     };
 
+    console.log("Patient:", patientName);
+console.log("Doctor:", doctorName);
+
     return (
-        <div className="fixed inset-0 bg-black/50 flex justify-center items-center backdrop-blur-sm">
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center backdrop-blur-sm z-50">
             <div className="bg-white w-full max-w-md h-[85vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden">
 
-                {/* Header */}
-                <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-4 font-semibold text-lg shadow">
-                    💬 Chat Room
+                {/* HEADER */}
+                <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-4 flex justify-between items-center">
+                    <div>
+                        <div className="font-semibold text-lg">💬 Chat Room</div>
+                       <div className="text-xs opacity-80 truncate">
+  {patientName || "Patient"} ↔ {doctorName || "Doctor"}
+</div>
+                    </div>
+
+                    {/* CLOSE BUTTON */}
+                    <button
+                        onClick={onClose}
+                        className="text-white text-xl font-bold hover:scale-110"
+                    >
+                        ✖
+                    </button>
                 </div>
 
-                {/* Messages */}
+                {/* MESSAGES */}
                 <div className="flex-1 overflow-y-auto p-3 space-y-2 bg-gray-50">
                     {messages.map((msg, i) => {
                         const isMe = msg.senderId === auth.currentUser.uid;
@@ -84,7 +114,7 @@ function Chat({ chatId }) {
                     <div ref={bottomRef}></div>
                 </div>
 
-                {/* Input */}
+                {/* INPUT */}
                 <div className="p-3 border-t flex gap-2 bg-white">
                     <input
                         value={text}
@@ -94,7 +124,7 @@ function Chat({ chatId }) {
                     />
                     <button
                         onClick={sendMessage}
-                        className="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-full transition"
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-full"
                     >
                         Send
                     </button>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import {
   collection,
   query,
@@ -10,6 +10,7 @@ import { db } from "../../../firebase";
 import Loader from "../../Loader";
 import Reports from "./Reports";
 
+// eslint-disable-next-line react/prop-types
 function SubmittedReports({ isDoctor, currentUserId }) {
   const [loading, setLoading] = useState(false);
   const [reports, setReports] = useState([]);

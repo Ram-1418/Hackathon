@@ -11,21 +11,22 @@ import {
   serverTimestamp,
   query,
   where,
-  getDocs
+  getDocs,
+  getDoc
 } from "firebase/firestore";
 
 import { db } from "../../../firebase";
-function Reports({ selectedReport, reports, setReportVisible, isDoctor }) {
 
+// eslint-disable-next-line react/prop-types
+function Reports({ selectedReport, reports, setReportVisible, isDoctor }) {
   const [openChat, setOpenChat] = React.useState(false);
 
-  // 🔥 UPDATED FUNCTION (FIXED)
+  // ✅ HANDLE STATUS UPDATE
   const handleStatusUpdate = async (newStatus) => {
     try {
-
       let chatId = null;
 
-      // 🔍 STEP 1: Check if chat already exists
+      // 🔍 Check existing chat
       const q = query(
         collection(db, "chats"),
         where("participants", "array-contains", selectedReport.patientId)
@@ -35,26 +36,60 @@ function Reports({ selectedReport, reports, setReportVisible, isDoctor }) {
 
       snapshot.forEach((docSnap) => {
         const data = docSnap.data();
-
         if (data.participants.includes(selectedReport.doctorId)) {
           chatId = docSnap.id;
         }
       });
 
-      // ➕ STEP 2: Create chat only if not exists
+      // ➕ Create chat if not exists
       if (!chatId && newStatus === "APPROVED") {
+
+        // 🔥 GET DOCTOR NAME
+        const doctorRef = doc(db, "doctors", selectedReport.doctorId);
+        const doctorSnap = await getDoc(doctorRef);
+
+        let doctorName = "Doctor";
+        if (doctorSnap.exists()) {
+          doctorName = doctorSnap.data().displayName;
+        }
+
+        // 🔥 GET PATIENT NAME
+        const patientRef = doc(db, "users", selectedReport.patientId);
+        const patientSnap = await getDoc(patientRef);
+
+        let patientName = "Patient";
+        if (patientSnap.exists()) {
+          patientName = patientSnap.data().displayName;
+        }
+
+        // ✅ CREATE CHAT
         const chatRef = await addDoc(collection(db, "chats"), {
           participants: [
             selectedReport.patientId,
             selectedReport.doctorId,
           ],
+          patientName,
+          doctorName,
           createdAt: serverTimestamp(),
         });
 
         chatId = chatRef.id;
+
+        // ✅ UPDATE APPOINTMENT WITH NAMES
+        await updateDoc(
+          doc(db, "appointments", selectedReport.id),
+          {
+            status: newStatus,
+            chatId: chatId,
+            doctorName,
+            patientName,
+          }
+        );
+
+        return; // ⚠️ prevent duplicate update
       }
 
-      // ✅ STEP 3: Update appointment
+      // ✅ UPDATE APPOINTMENT (if chat already exists)
       await updateDoc(
         doc(db, "appointments", selectedReport.id),
         {
@@ -64,13 +99,12 @@ function Reports({ selectedReport, reports, setReportVisible, isDoctor }) {
       );
 
       alert(`Appointment ${newStatus}`);
-
     } catch (error) {
       console.error("Error updating status:", error);
     }
   };
 
-  // 🔥 Date formatter
+  // ✅ DATE FORMATTER
   const formatDate = (timestamp) => {
     if (!timestamp) return "N/A";
 
@@ -80,7 +114,7 @@ function Reports({ selectedReport, reports, setReportVisible, isDoctor }) {
 
     return new Date(timestamp).toLocaleString();
   };
-  debugger
+
   return (
     <div className="h-screen w-screen fixed top-0 left-0 bg-slate-900/80 z-10 flex justify-center items-center">
 
@@ -94,7 +128,9 @@ function Reports({ selectedReport, reports, setReportVisible, isDoctor }) {
             icon={faArrowLeft}
             className="cursor-pointer text-xl"
           />
+
           <h2 className="text-2xl font-bold">Appointment Details</h2>
+
           <FontAwesomeIcon
             onClick={() => setReportVisible(false)}
             icon={faClose}
@@ -143,7 +179,7 @@ function Reports({ selectedReport, reports, setReportVisible, isDoctor }) {
             </span>
           </div>
 
-          {/* USER MESSAGES */}
+          {/* USER STATUS */}
           {!isDoctor && selectedReport.status === "PENDING" && (
             <div className="mt-4 text-yellow-600 font-semibold">
               ⏳ Waiting for doctor's approval.
@@ -162,7 +198,7 @@ function Reports({ selectedReport, reports, setReportVisible, isDoctor }) {
             </div>
           )}
 
-          {/* DOCTOR BUTTONS */}
+          {/* DOCTOR ACTIONS */}
           {isDoctor && selectedReport.status === "PENDING" && (
             <div className="flex gap-4 mt-6">
               <button
@@ -182,9 +218,7 @@ function Reports({ selectedReport, reports, setReportVisible, isDoctor }) {
           )}
 
           {/* CHAT BUTTON */}
-
           {selectedReport.status?.trim() === "APPROVED" && (
-
             <button
               onClick={() => setOpenChat(true)}
               className="mt-6 w-full bg-blue-500 text-white py-3 rounded-lg"
@@ -192,11 +226,9 @@ function Reports({ selectedReport, reports, setReportVisible, isDoctor }) {
               Open Chat 💬
             </button>
           )}
-
         </div>
       </div>
 
-      {/* CHAT POPUP */}
       {/* CHAT POPUP */}
       {openChat && (
         <Chat
@@ -204,15 +236,26 @@ function Reports({ selectedReport, reports, setReportVisible, isDoctor }) {
             selectedReport.chatId ||
             reports?.find(r => r.id === selectedReport.id)?.chatId
           }
+          onClose={() => setOpenChat(false)}
+          patientName={
+            selectedReport.patientName ||
+            selectedReport.patientEmail ||
+            "Patient"
+          }
+
+          doctorName={
+            selectedReport.doctorName ||
+            "Doctor"
+          }
         />
       )}
-      {/* SAFETY (if chatId not loaded yet) */}
+
+      {/* LOADING */}
       {openChat && !selectedReport.chatId && (
         <div className="bg-white p-4 rounded shadow">
           Loading chat...
         </div>
       )}
-
     </div>
   );
 }
