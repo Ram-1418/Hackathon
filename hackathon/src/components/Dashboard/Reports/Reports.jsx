@@ -1,29 +1,76 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faClose } from "@fortawesome/free-solid-svg-icons";
-import { doc, updateDoc } from "firebase/firestore";
+import Chat from "../../chat";
+
+import {
+  doc,
+  updateDoc,
+  addDoc,
+  collection,
+  serverTimestamp,
+  query,
+  where,
+  getDocs
+} from "firebase/firestore";
+
 import { db } from "../../../firebase";
+function Reports({ selectedReport, reports, setReportVisible, isDoctor }) {
 
-function Reports({ selectedReport, setReportVisible, isDoctor }) {
+  const [openChat, setOpenChat] = React.useState(false);
 
-  // 🔥 Update appointment status (Doctor only)
+  // 🔥 UPDATED FUNCTION (FIXED)
   const handleStatusUpdate = async (newStatus) => {
     try {
+
+      let chatId = null;
+
+      // 🔍 STEP 1: Check if chat already exists
+      const q = query(
+        collection(db, "chats"),
+        where("participants", "array-contains", selectedReport.patientId)
+      );
+
+      const snapshot = await getDocs(q);
+
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+
+        if (data.participants.includes(selectedReport.doctorId)) {
+          chatId = docSnap.id;
+        }
+      });
+
+      // ➕ STEP 2: Create chat only if not exists
+      if (!chatId && newStatus === "APPROVED") {
+        const chatRef = await addDoc(collection(db, "chats"), {
+          participants: [
+            selectedReport.patientId,
+            selectedReport.doctorId,
+          ],
+          createdAt: serverTimestamp(),
+        });
+
+        chatId = chatRef.id;
+      }
+
+      // ✅ STEP 3: Update appointment
       await updateDoc(
         doc(db, "appointments", selectedReport.id),
         {
           status: newStatus,
+          chatId: chatId || selectedReport.chatId || null,
         }
       );
 
       alert(`Appointment ${newStatus}`);
-      setReportVisible(false);
+
     } catch (error) {
       console.error("Error updating status:", error);
     }
   };
 
-  // 🔥 Safe Date Formatter
+  // 🔥 Date formatter
   const formatDate = (timestamp) => {
     if (!timestamp) return "N/A";
 
@@ -33,12 +80,14 @@ function Reports({ selectedReport, setReportVisible, isDoctor }) {
 
     return new Date(timestamp).toLocaleString();
   };
-
+  debugger
   return (
     <div className="h-screen w-screen fixed top-0 left-0 bg-slate-900/80 z-10 flex justify-center items-center">
+
+      {/* MAIN BOX */}
       <div className="w-full max-w-3xl bg-white p-6 rounded-lg shadow-lg">
 
-        {/* Header */}
+        {/* HEADER */}
         <div className="flex justify-between items-center mb-6">
           <FontAwesomeIcon
             onClick={() => setReportVisible(false)}
@@ -53,12 +102,11 @@ function Reports({ selectedReport, setReportVisible, isDoctor }) {
           />
         </div>
 
-        {/* Details Section */}
+        {/* DETAILS */}
         <div className="space-y-3">
 
           <div><strong>Email:</strong> {selectedReport.patientEmail}</div>
 
-          {/* Appointment Date */}
           {selectedReport.appointmentDateTime && (
             <div>
               <strong>Appointment Date & Time:</strong>{" "}
@@ -79,7 +127,7 @@ function Reports({ selectedReport, setReportVisible, isDoctor }) {
             </div>
           )}
 
-          {/* Status */}
+          {/* STATUS */}
           <div>
             <strong>Status:</strong>{" "}
             <span
@@ -87,34 +135,34 @@ function Reports({ selectedReport, setReportVisible, isDoctor }) {
                 selectedReport.status === "APPROVED"
                   ? "text-green-600 font-bold"
                   : selectedReport.status === "REJECTED"
-                  ? "text-red-600 font-bold"
-                  : "text-yellow-600 font-bold"
+                    ? "text-red-600 font-bold"
+                    : "text-yellow-600 font-bold"
               }
             >
               {selectedReport.status}
             </span>
           </div>
 
-          {/* 🔥 User Friendly Messages */}
+          {/* USER MESSAGES */}
           {!isDoctor && selectedReport.status === "PENDING" && (
             <div className="mt-4 text-yellow-600 font-semibold">
-              ⏳ Your appointment request is waiting for doctor's approval.
+              ⏳ Waiting for doctor's approval.
             </div>
           )}
 
           {!isDoctor && selectedReport.status === "APPROVED" && (
             <div className="mt-4 text-green-600 font-semibold">
-              🎉 Your appointment has been approved by the doctor.
+              🎉 Appointment approved.
             </div>
           )}
 
           {!isDoctor && selectedReport.status === "REJECTED" && (
             <div className="mt-4 text-red-600 font-semibold">
-              ❌ Your appointment request was rejected by the doctor.
+              ❌ Appointment rejected.
             </div>
           )}
 
-          {/* 🔥 Accept / Reject Buttons (Doctor Only) */}
+          {/* DOCTOR BUTTONS */}
           {isDoctor && selectedReport.status === "PENDING" && (
             <div className="flex gap-4 mt-6">
               <button
@@ -133,8 +181,38 @@ function Reports({ selectedReport, setReportVisible, isDoctor }) {
             </div>
           )}
 
+          {/* CHAT BUTTON */}
+
+          {selectedReport.status?.trim() === "APPROVED" && (
+
+            <button
+              onClick={() => setOpenChat(true)}
+              className="mt-6 w-full bg-blue-500 text-white py-3 rounded-lg"
+            >
+              Open Chat 💬
+            </button>
+          )}
+
         </div>
       </div>
+
+      {/* CHAT POPUP */}
+      {/* CHAT POPUP */}
+      {openChat && (
+        <Chat
+          chatId={
+            selectedReport.chatId ||
+            reports?.find(r => r.id === selectedReport.id)?.chatId
+          }
+        />
+      )}
+      {/* SAFETY (if chatId not loaded yet) */}
+      {openChat && !selectedReport.chatId && (
+        <div className="bg-white p-4 rounded shadow">
+          Loading chat...
+        </div>
+      )}
+
     </div>
   );
 }
