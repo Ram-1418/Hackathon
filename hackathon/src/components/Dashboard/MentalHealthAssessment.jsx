@@ -184,6 +184,31 @@ function MentalHealthAssessmentForm({ disableFields }) {
           <option value="High">High</option>
           <option value="Very High">Very High</option>
         </select>
+        {/* Energy Level */}
+        <select
+          name="energyLevel"
+          value={formData.energyLevel}
+          onChange={handleChange}
+          className="w-full p-3 border rounded-lg mb-4"
+        >
+          <option value="">Select Energy Level</option>
+          <option value="Low">Low</option>
+          <option value="Moderate">Moderate</option>
+          <option value="High">High</option>
+        </select>
+
+        {/* Appetite */}
+        <select
+          name="appetite"
+          value={formData.appetite}
+          onChange={handleChange}
+          className="w-full p-3 border rounded-lg mb-4"
+        >
+          <option value="">Select Appetite</option>
+          <option value="Low">Low</option>
+          <option value="Normal">Normal</option>
+          <option value="High">High</option>
+        </select>
 
         {/* Suicidal Thoughts */}
         <select
