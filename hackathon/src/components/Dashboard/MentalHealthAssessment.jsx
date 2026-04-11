@@ -24,7 +24,7 @@ function MentalHealthAssessmentForm({ disableFields }) {
 
   const [doctors, setDoctors] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState("");
-  const [specialization, setSpecialization] = useState(""); // ✅ NEW
+  const [specialization, setSpecialization] = useState("");
 
   useEffect(() => {
     const fetchDoctors = async () => {
@@ -75,9 +75,10 @@ function MentalHealthAssessmentForm({ disableFields }) {
         );
       }
 
+      // ✅ Save in appointments collection
       await addDoc(collection(db, "appointments"), {
         doctorId: selectedDoctor,
-        specialization: specialization, // ✅ SAVE specialization
+        specialization: specialization,
         patientId: user.uid,
         patientEmail: user.email,
         mood: formData.mood,
@@ -93,9 +94,29 @@ function MentalHealthAssessmentForm({ disableFields }) {
         createdAt: serverTimestamp(),
       });
 
+      // ✅ 🔥 Save in doctor → patients subcollection
+      if (formData.appointment && selectedDoctor) {
+        await addDoc(
+          collection(db, "doctors", selectedDoctor, "patients"),
+          {
+            patientId: user.uid,
+            patientEmail: user.email,
+            mood: formData.mood,
+            sleepQuality: formData.sleepQuality,
+            stressLevel: formData.stressLevel,
+            anxietyLevel: formData.anxietyLevel,
+            energyLevel: formData.energyLevel,
+            appetite: formData.appetite,
+            additionalNotes: formData.additionalNotes,
+            appointmentDateTime,
+            createdAt: serverTimestamp(),
+          }
+        );
+      }
+
       alert("Appointment submitted successfully!");
 
-      // reset
+      // reset form
       setFormData({
         mood: "",
         sleepQuality: "",
@@ -184,7 +205,8 @@ function MentalHealthAssessmentForm({ disableFields }) {
           <option value="High">High</option>
           <option value="Very High">Very High</option>
         </select>
-        {/* Energy Level */}
+
+        {/* ✅ Energy Level */}
         <select
           name="energyLevel"
           value={formData.energyLevel}
@@ -197,7 +219,7 @@ function MentalHealthAssessmentForm({ disableFields }) {
           <option value="High">High</option>
         </select>
 
-        {/* Appetite */}
+        {/* ✅ Appetite */}
         <select
           name="appetite"
           value={formData.appetite}
@@ -233,7 +255,7 @@ function MentalHealthAssessmentForm({ disableFields }) {
           className="w-full p-3 border rounded-lg mb-4"
         />
 
-        {/* Appointment Checkbox */}
+        {/* Appointment */}
         <div className="mb-4">
           <input
             type="checkbox"
@@ -246,7 +268,6 @@ function MentalHealthAssessmentForm({ disableFields }) {
 
         {formData.appointment && (
           <>
-            {/* ✅ Specialization Dropdown */}
             <select
               value={specialization}
               onChange={(e) => {
@@ -270,7 +291,6 @@ function MentalHealthAssessmentForm({ disableFields }) {
               </option>
             </select>
 
-            {/* ✅ Filtered Doctor Dropdown */}
             <select
               value={selectedDoctor}
               onChange={(e) => setSelectedDoctor(e.target.value)}
@@ -278,7 +298,6 @@ function MentalHealthAssessmentForm({ disableFields }) {
               className="w-full p-3 border rounded-lg mb-4"
             >
               <option value="">Select Doctor</option>
-
               {doctors
                 .filter(
                   (doctor) => doctor.specialization === specialization
@@ -290,7 +309,6 @@ function MentalHealthAssessmentForm({ disableFields }) {
                 ))}
             </select>
 
-            {/* Date */}
             <input
               type="date"
               name="appointmentDate"
@@ -301,7 +319,6 @@ function MentalHealthAssessmentForm({ disableFields }) {
               className="w-full p-3 border rounded-lg mb-4"
             />
 
-            {/* Time */}
             <input
               type="time"
               name="appointmentTime"
